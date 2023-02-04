@@ -1,0 +1,37 @@
+﻿@page "/employeelist"
+@using Samvad_App.Shared.Models
+@inject HttpClient Http
+
+<PageTitle>Employee List</PageTitle>
+<h1>Employee Detail</h1>
+<div>
+    <a href="/addemployee"> Add New Employee</a>
+    @if (employeeList != null)
+    {
+        <div class="emp-list">
+                @foreach (var p in employeeList)
+                {
+                <div class="emp-dtl">
+                    <div class="emp-name">@p.FirstName @p.LastName</div>
+                    <div class="emp-name"><a href="mailto:@p.Email" class="emp-email">@p.Email</a></div>
+                    <div class="emp-no">@p.MobileNo</div>
+                    <div class="emp-add">@p.Address</div>
+                    <div class="emp-add">
+                        <a href="/editemployee/@p.Id">Edit</a> |
+                        <a href="/deleteemployee/@p.Id">Delete</a>
+                    </div>
+                </div>
+                   
+                }
+           </div>
+    }
+</div>
+@code {
+    List<EmployeeModel> employeeList = new List<EmployeeModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync("api/employee");
+        response.EnsureSuccessStatusCode();
+        employeeList = await response.Content.ReadFromJsonAsync<List<EmployeeModel>>();
+    }
+}

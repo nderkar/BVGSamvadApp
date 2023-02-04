@@ -1,0 +1,37 @@
+﻿@page "/"
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsRuntime
+@using Samvad_App.Shared.Models
+@inject HttpClient Http
+<PageTitle>BVG Samvad</PageTitle>
+<AuthorizeView>
+    <NotAuthorized>
+        @{
+            _navigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView>
+    <Authorized>
+        <NavMenu />
+        <div class="container-fluid">
+            <div class="row justify-content-evenly">
+               <LeftPan/>
+                <MainPan />
+               <RightPan/>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+@code{
+    UserModel currentUser = new UserModel();
+    protected override async Task OnInitializedAsync()
+    {
+        var module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/site.js");
+        await module.InvokeVoidAsync("page_Load","");
+        var response = await Http.GetAsync("api/accounts");
+        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,69 @@
+﻿@page "/editemployee/{Id}"
+@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+<h2>Edit employee</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group pt-2">
+            <label for="FirstName"> First Name *</label>
+            <input form="FirstName" class="form-control" @bind="@employee.FirstName" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group pt-2">
+            <label for="LastName"> Last Name *</label>
+            <input form="LastName" class="form-control" @bind="@employee.LastName" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group pt-2">
+            <label for="Email"> Email *</label>
+            <input form="Email" class="form-control" @bind="@employee.Email" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group pt-2">
+            <label for="MobileNo"> Mobile No *</label>
+            <input form="mobileNo" class="form-control" @bind="@employee.MobileNo" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group pt-2">
+            <label for="Address"> Address *</label>
+            <input form="address" class="form-control" @bind="@employee.Address" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group pt-4">
+            <input type="button" class="btn btn-primary" @onclick="@Save" value="Save" />
+            <input type="button" class="btn" @onclick="@Cancel" value="Cancel" />
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    EmployeeModel employee = new EmployeeModel();
+    protected override async Task OnInitializedAsync()
+    {
+        employee = await Http.GetFromJsonAsync<EmployeeModel>("api/employee/" + Id);
+    }
+    protected async Task Save()
+    {
+        var response = await Http.PutAsJsonAsync("api/employee/" + Id, @employee);
+        bool employeeResponse = await response.Content.ReadFromJsonAsync<bool>();
+        if (employeeResponse)
+        {
+            //await JsRuntime.InvokeVoidAsync("alert", "Updated Successfully!");
+            NavigationManager.NavigateTo("employeelist");
+        }
+    }
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("employeelist");
+    }
+}

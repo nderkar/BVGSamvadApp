@@ -1,0 +1,202 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+<AuthorizeView>
+    <Authorized>
+       
+ <!-- ================= Appbar ================= -->
+    <div
+      class="bg-white d-flex align-items-center fixed-top shadow"
+      style="min-height: 56px; z-index: 5"
+    >
+<div class="container-fluid">
+        <div class="row align-items-center">
+          <!-- search -->
+          <div class="col d-flex align-items-center">
+            <!-- logo -->
+            <img src="./images/logo.jpeg" style="width:70px"/>
+            <!-- search bar -->
+                        <div class="input-group ms-2" type="button" style="display:none">
+                            <!-- mobile -->
+              <span
+                class="input-group-prepend d-lg-none"
+                id="searchMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                data-bs-auto-close="outside"
+              >
+                <div
+                  class="input-group-text bg-gray border-0 rounded-circle"
+                  style="min-height: 40px"
+                >
+                  <i class="fas fa-search text-muted"></i>
+                </div>
+              </span>
+              <!-- desktop -->
+              <span
+                class="input-group-prepend d-none d-lg-block"
+                id="searchMenu"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                data-bs-auto-close="outside" 
+              >
+                <div
+                  class="input-group-text bg-gray border-0 rounded-pill"
+                  style="min-height: 40px; min-width: 230px"
+                >
+                  <i class="fas fa-search me-2 text-muted"></i>
+                  <p class="m-0 fs-7 text-muted">Search BVG-Samvad</p>
+                </div>
+              </span>
+              <!-- search menu -->
+              <ul
+                class="dropdown-menu overflow-auto border-0 shadow p-3"
+                aria-labelledby="searchMenu"
+                style="width: 20em; max-height: 600px"
+              >
+                <!-- search input -->
+                <li>
+                  <input
+                    type="text"
+                    class="rounded-pill border-0 bg-gray dropdown-item"
+                                           placeholder="Search BVG-Samvad"
+                    autofocus
+                  />
+                </li>
+               
+              </ul>
+            </div>
+          </div>
+          <!--TopMenu-->
+          <div class="col d-flex d-xl-flex justify-content-center">
+                        <p class="sitename">BVG Samvad</p>
+          </div>
+          <!-- menus -->
+          <div class="col d-flex align-items-center justify-content-end">
+            <!-- avatar -->
+            <div
+              class="align-items-center justify-content-center d-none d-xl-flex"
+            >
+                            @if (@currentUser.ProfilePicture == null)
+                            {
+                                <img src="./images/user/@defaultAvatar"
+                                 class="rounded-circle me-2"                
+                                style="width: 38px; height: 38px; object-fit: cover"/>
+                            }
+                            else
+                            {
+                                <img src="./images/user/@currentUser.ProfilePicture"
+                                 class="rounded-circle me-2"
+                                 style="width: 38px; height: 38px; object-fit: cover" />                                
+                            }
+                            
+
+                            @if (@currentUser.FirstName == null)
+                            {
+                                <p class="m-0">
+                                    @context.User.Identity.Name
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="m-0">
+                                    @currentUser.FirstName   @currentUser.LastName
+                                </p>
+                            }
+
+                        </div>
+            <!--NavPanOne-->
+            <!--NavPanTwo-->
+            <!--NavPanThree-->
+            <!-- secondary menu -->
+            <div
+              class="
+                rounded-circle
+                p-1
+                bg-gray
+                d-flex
+                align-items-center
+                justify-content-center
+                mx-2
+              "
+              style="width: 38px; height: 38px"
+              type="button"
+              id="secondMenu"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              data-bs-auto-close="outside"
+            >
+              <i class="fas fa-caret-down"></i>
+            </div>
+            <!-- secondary menu dd -->
+            <ul
+              class="dropdown-menu border-0 shadow p-3"
+              aria-labelledby="secondMenu"
+              style="width: 23em"
+            >
+              <!-- avatar -->
+              <li class="dropdown-item p-1 rounded d-flex" type="button">
+                                @if (@currentUser.ProfilePicture == null)
+                                {
+                                    <img src="./images/user/@defaultAvatar"
+                                     class="rounded-circle me-2"
+                                     style="width: 45px; height: 45px; object-fit: cover" />
+                                }
+                                else
+                                {
+                                    <img src="./images/user/@currentUser.ProfilePicture"
+                                     class="rounded-circle me-2"
+                                     style="width: 45px; height: 45px; object-fit: cover" />
+                                }
+                               
+                <div>
+                                    <p class="m-0">@currentUser.FirstName @currentUser.LastName</p>
+                                    <!--p class="m-0 text-muted">See your profile</p-->
+                </div>
+              </li>
+              <hr />
+              <!--RightPanOptions-->
+              <!-- 4 -->
+              <li class="dropdown-item p-1 my-3 rounded" type="button">
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a
+                      href="/LogOut"
+                      class="d-flex text-decoration-none text-dark"
+                    >
+                      <i class="fas fa-cog bg-gray p-2 rounded-circle"></i>
+                      <div
+                        class="
+                          ms-3
+                          d-flex
+                          justify-content-between
+                          align-items-center
+                          w-100
+                        "
+                      >
+                                    <p class="m-0">Log Out</p>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <!-- end -->
+          </div>
+        </div>
+</div>
+ </div>
+ </Authorized>
+ </AuthorizeView>
+@code {
+    UserModel currentUser = new UserModel();
+    string defaultAvatar { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        defaultAvatar = "defaultuser.jpg";
+        
+        var response = await Http.GetAsync("api/accounts");
+        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+           
+    }
+   
+}

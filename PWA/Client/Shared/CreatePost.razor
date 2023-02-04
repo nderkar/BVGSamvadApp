@@ -1,0 +1,379 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@inject IJSRuntime js
+<!-- create post -->
+<AuthorizeView Policy="@Policies.IsAdmin">
+
+<div class="bg-white p-3 mt-3 rounded border shadow">
+    <!-- avatar -->
+    <div class="d-flex" type="button">
+        <div class="p-1" >
+                @if (@currentUser.ProfilePicture == null)
+                {
+                    <img src="./images/user/@defaultAvatar"
+                     class="rounded-circle me-2"
+                     style="width: 38px; height: 38px; object-fit: cover" />
+                }
+                else
+                {
+                    <img src="./images/user/@currentUser.ProfilePicture"
+                     class="rounded-circle me-2"
+                     style="width: 38px; height: 38px; object-fit: cover" />
+                }
+               
+        </div>
+        <input type="text"
+               class="form-control rounded-pill border-0 bg-gray pointer"
+               disabled
+               placeholder="Add a new post"
+               data-bs-toggle="modal"
+               data-bs-target="#createModal"  />
+    </div>
+    <!-- create modal -->
+    <div class="modal fade"
+         id="createModal"
+         tabindex="-1"
+         aria-labelledby="createModalLabel"
+         aria-hidden="true"
+         data-bs-backdrop="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <!-- head -->
+                <div class="modal-header align-items-center">
+                    <h5 class="text-dark text-center w-100 m-0"
+                        id="exampleModalLabel">
+                        Create Post
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <div class="my-1 p-1">
+                        <div class="d-flex flex-column">
+                            <!-- name -->
+                            <div class="d-flex align-items-center">
+                                <div class="p-2">
+                                        @if (@currentUser.ProfilePicture == null)
+                                        {
+                                            <img src="./images/user/@defaultAvatar"
+                                         class="rounded-circle"
+                                         style="
+                                  width: 38px;
+                                  height: 38px;
+                                  object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <img src="./images/user/@currentUser.ProfilePicture"
+                                             class="rounded-circle"
+                                             style="
+                                  width: 38px;
+                                  height: 38px;
+                                  object-fit: cover;" />
+                                        }
+                                       
+                                </div>
+                                <div>
+                                        <p class="m-0 fw-bold">@currentUser.FirstName @currentUser.LastName</p>
+                                    <select class="form-select border-0 bg-gray w-75 fs-7"
+                                            aria-label="Default select example">
+                                        <option selected value="1">Public</option>
+                                        <!--option value="2">Pin To Top</option>
+                                        <option value="3">Hide</option-->
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- text -->
+                            <div>
+                                <textarea form="postmessage" cols="30"
+                                          rows="3"
+                                          class="form-control border-1 m-2" @bind="@post.postmessage"></textarea>
+                            </div>
+                                <div>
+                                    <input  placeholder="External Video Link 1"
+                                            type="text"
+                                            class="form-control rounded-pill border-1 bg-gray pointer m-2" 
+                                            @bind="@post.extlink1"></input>
+                                </div>
+                                <div>
+                                    <input  placeholder="External Video Link 2"
+                                            type="text"
+                                            class="form-control rounded-pill border-1 bg-gray pointer m-2" 
+                                            @bind="@post.extlink2"></input>
+                                </div>
+                            <div class="dropzone @dropClass rounded mt-2">
+                                <InputFile multiple
+                                           OnChange="@HandleFileInputChange"
+                                               accept="image/png,image/gif,image/jpeg,video/mp4,audio/mp4,audio/mpeg,application/mp4"
+                                           @ondragenter="HandleDragEnter"
+                                           @ondragleave="HandleDragLeave"></InputFile>
+                                <div class="row" style="display:block">
+                                    @foreach (var imgUrl in imgUrls)
+                                    {
+                                        <img src="@imgUrl">
+                                    }
+                                </div>
+                                Upload files
+                            </div>
+                            @if ((fileTypeError || fileSizeError))
+                            {
+                                <ul class="validation-errors mb-0">
+                                    @if (fileTypeError)
+                                    {
+                                        <li class="validation-message">Only image files are accepted.</li>
+                                    }
+                                    @if (fileSizeError)
+                                    {
+                                        <li class="validation-message">The max file size is @MaxFileSizeMB MB.</li>
+                                    }
+                                </ul>
+                            }
+                            @if (selectedFiles != null && selectedFiles.Count > 0)
+                            {
+                                <div class="col-12">
+                                    <ul>
+                                        @foreach (var file in selectedFiles)
+                                        {
+                                            <li>
+                                                @file.Name
+                                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                                @onclick="@(e => RemoveFile(file))">
+                                                    <small class="align-text-bottom">Remove</small>
+                                                </button>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            <!-- emoji  -->
+                            <!--div class="
+                              d-flex
+                              justify-content-between
+                              align-items-center
+                            ">
+                                <img src="https://www.facebook.com/images/composer/SATP_Aa_square-2x.png"
+                                     class="pointer"
+                                     alt="fb text"
+                                     style="
+                                width: 30px;
+                                height: 30px;
+                                object-fit: cover;
+                              " />
+                                <i class="far fa-laugh-wink fs-5 text-muted pointer"></i>
+                            </div-->
+                            <!-- options -->
+                            <!--div class="
+                              d-flex
+                              justify-content-between
+                              border border-1 border-light
+                              rounded
+                              p-3
+                              mt-3
+                            ">
+                                <p class="m-0">Add to your post</p>
+                                <div>
+                                    <i class="
+                                  fas
+                                  fa-images
+                                  fs-5
+                                  text-success
+                                  pointer
+                                  mx-1
+                                "></i>
+                                    <i class="
+                                  fas
+                                  fa-user-check
+                                  fs-5
+                                  text-primary
+                                  pointer
+                                  mx-1
+                                "></i>
+                                    <i class="
+                                  far
+                                  fa-smile
+                                  fs-5
+                                  text-warning
+                                  pointer
+                                  mx-1
+                                "></i>
+                                    <i class="
+                                  fas
+                                  fa-map-marker-alt
+                                  fs-5
+                                  text-info
+                                  pointer
+                                  mx-1
+                                "></i>
+                                    <i class="
+                                  fas
+                                  fa-microphone
+                                  fs-5
+                                  text-danger
+                                  pointer
+                                  mx-1
+                                "></i>
+                                    <i class="
+                                  fas
+                                  fa-ellipsis-h
+                                  fs-5
+                                  text-muted
+                                  pointer
+                                  mx-1
+                                "></i>
+                                </div>
+                            </div-->
+                        </div>
+                    </div>
+
+                    <!-- end -->
+                </div>
+                <!-- footer -->
+                <div class="modal-footer">
+                    
+                    <button type="button" class="btn btn-primary w-100" @onclick="SaveToServer">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <!-- actions -->
+    <div class="d-flex flex-column flex-lg-row mt-3">
+       
+        <div class="
+                    dropdown-item
+                    rounded
+                    d-flex
+                    align-items-center
+                    justify-content-center
+                  "
+             type="button">
+            <i class="fas fa-photo-video me-2 text-success"></i>
+            <p class="m-0 text-muted">Photo/Video</p>
+        </div>
+       
+    </div>
+</div>
+</AuthorizeView>
+@code {
+    [Parameter]   
+    public EventCallback<PostModel> onPostCreated{ get; set; }
+    List<string> imgUrls = new List<string>();
+    public List<FileData> fileData = new List<FileData>();
+    PostModel post = new PostModel();    
+    IJSObjectReference JsObjectRef { get; set; }
+    string defaultAvatar { get; set; }
+    UserModel currentUser = new UserModel();
+    protected override async Task OnInitializedAsync()
+    {
+        defaultAvatar = "defaultuser.jpg";
+        var response = await Http.GetAsync("api/accounts");
+        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+        JsObjectRef = await js.InvokeAsync<IJSObjectReference>("import", "/js/Modal.js");
+    }
+
+    private async Task SaveToServer()
+    {
+        post.createdby = "nnn";
+        var response = await Http.PostAsJsonAsync("api/post", post);
+        PostModel personResponse = await response.Content.ReadFromJsonAsync<PostModel>();
+        if (personResponse?.postid > 0)
+        {
+
+            if (selectedFiles != null)
+            {
+                foreach (IBrowserFile file in selectedFiles)
+                {
+                    try
+                    {
+                        var buffers = new byte[file.Size];
+                        await file.OpenReadStream(MaxFileSize).ReadAsync(buffers);
+                        string imageType = file.ContentType;
+                        int dotIndex = file.Name.LastIndexOf(".");
+                        string fileExtension = "";
+                        if (dotIndex > 0)
+                        {
+                            fileExtension = file.Name.Substring(dotIndex + 1);
+                        }
+
+                        var payload = new SaveFile { 
+                            Data = buffers, 
+                            PostId = personResponse.postid,
+                            FileExtension = fileExtension,
+                            Size = file.Size
+                        };
+                        var responseAsset = await Http.PostAsJsonAsync("/api/FileUpload/save-file", payload);
+
+                       //var postAsset =  await responseAsset.Content.ReadFromJsonAsync<PostAssets>();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //string err = ex.Message;
+                    }
+                }
+            }
+
+        }
+        post.postmessage = "";
+        selectedFiles.Clear();
+        await JsObjectRef.InvokeVoidAsync("closeModalWindow", "#createModal");
+        await onPostCreated.InvokeAsync(personResponse);
+    }
+
+    /*Drag drop*/
+    const int MaxFileSizeMB = 500;
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; // 500MB
+    private string dropClass = "";
+    private bool fileSizeError = false;
+    private bool fileTypeError = false;
+    private List<IBrowserFile> selectedFiles = new List<IBrowserFile>();
+    private void HandleDragEnter()
+    {
+        dropClass = "dropzone-drag";
+    }
+
+    private void HandleDragLeave()
+    {
+        dropClass = "";
+    }
+    private async Task HandleFileInputChange(InputFileChangeEventArgs e)
+    {
+        dropClass = "";
+        fileSizeError = false;
+        fileTypeError = false;
+        List<string> acceptedFileTypes = new List<string>() 
+        { "image/png", "image/jpeg", "image/gif", "video/mp4", "audio/mp4","audio/mpeg","application/mp4" };
+        foreach (IBrowserFile file in e.GetMultipleFiles(5))
+        {
+            bool error = false;
+            if (file.Size > MaxFileSize)
+            {
+                error = true;
+                fileSizeError = true;
+            }
+
+            if (!acceptedFileTypes.Contains(file.ContentType))
+            {
+                error = true;
+                fileTypeError = true;
+            }
+
+            //keep the good files
+            if (!error)
+            {
+                selectedFiles.Add(file);
+            }
+
+        }
+
+    }
+    private void RemoveFile(IBrowserFile removefile)
+    {
+        selectedFiles.Remove(removefile);
+       
+    }
+    /*End*/
+}

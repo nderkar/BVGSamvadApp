@@ -1,0 +1,71 @@
+﻿@page "/login"
+@layout NoMenuLayout
+@inject IAuthService AuthService
+@inject NavigationManager NavMan
+
+<PageTitle>BVG Samvad Login</PageTitle>
+
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@Error</p>
+    </div>
+}   
+<div class="head">
+    <h1><p class="sitename">BVG Samvad</p></h1>
+    <h2>Hi, Welcome Back!</h2>
+</div>
+<div class="card login">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group pt-2">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="@loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+            <div class="form-group pt-2">
+                <label for="password">Password</label>
+                <InputText Id="password" type="password" Class="form-control" @bind-Value="@loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            
+            <div class="form-group pt-4">
+                <button type="submit" class="submit btn-primary">Submit</button>
+            </div>
+            <div class="form-group pt-2" style="display:none">
+                <a style="font-weight: bold;" href="/Register">Register</a>
+            </div>
+            
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private LoginModel loginModel = new LoginModel();
+    private bool ShowErrors;
+    private string Error = "";
+
+    private async Task HandleLogin()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Login(loginModel);
+
+        if (result.Successful)
+        {
+            var returnUrl = NavMan.QueryString("returnUrl") ?? "/";
+            NavMan.NavigateTo(returnUrl);
+        }
+        else
+        {
+            Console.WriteLine($"Error: '{result.Error}'");
+            Error = result.Error;
+            ShowErrors = true;
+        }
+    }
+}

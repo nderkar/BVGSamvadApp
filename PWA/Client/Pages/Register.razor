@@ -1,0 +1,104 @@
+﻿@page "/register"
+@layout NoMenuLayout
+@inject IAuthService AuthService
+@inject NavigationManager NavMan
+
+<PageTitle>BVG Samvad Register</PageTitle>
+
+@if (ShowErrors)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var error in Errors)
+        {
+            <p>error</p>
+        }
+    </div>
+}
+
+<div class="head">
+    <h1>Samvad</h1>
+    <h2>Register with us!</h2>
+</div>
+<div class="card login">
+    <div class="card-body">
+        <h5 class="card-title">Please enter your details</h5>
+        <EditForm Model="@RegisterModel" OnValidSubmit="@HandleRegistration">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group pt-2">
+                <label for="firstname">First Name</label>
+                <InputText Id="firstname" Class="form-control" @bind-Value="@RegisterModel.FirstName" />
+                <ValidationMessage For="@(() => RegisterModel.FirstName)" />
+            </div>
+            <div class="form-group pt-2">
+                <label for="lastname">Last Name</label>
+                <InputText Id="lastname" Class="form-control" @bind-Value="@RegisterModel.LastName" />
+                <ValidationMessage For="@(() => RegisterModel.LastName)" />
+            </div>
+            <div class="form-group pt-2">
+                <label for="email">User Type : </label>
+                <InputRadioGroup Class="form-control" @bind-Value="@RegisterModel.UserRole">
+                    @foreach (var option in roleOptions)
+                    {
+                        if(option == "User")
+                        {
+                            <InputRadio Value="option" checked="checked"  /> @option 
+                        }
+                        else
+                        {
+                            <InputRadio Value="option" /> @option
+                        }
+                        
+                    }
+                </InputRadioGroup>
+            </div>
+            <div class="form-group pt-2">
+                <label for="email">Email address</label>
+                <InputText Id="email" Class="form-control" @bind-Value="@RegisterModel.Email" />
+                <ValidationMessage For="@(() => RegisterModel.Email)" />
+            </div>
+            <div class="form-group pt-2">
+                <label for="password">Password</label>
+                <InputText type="password" Id="password" Class="form-control" @bind-Value="@RegisterModel.Password" />
+                <ValidationMessage For="@(() => RegisterModel.Password)" />
+            </div>
+            <div class="form-group pt-2">
+                <label for="password">Confirm Password</label>
+                <InputText type="password" Id="password" Class="form-control" @bind-Value="@RegisterModel.ConfirmPassword" />
+                <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
+            </div>            
+            <div class="form-group pt-4">
+                <button type="submit" class="submit btn-primary">Submit</button>
+            </div>
+            <div class="form-group pt-2">
+                <a style="font-weight: bold;" href="/Login">Log In</a>
+            </div>
+            
+        </EditForm>
+    </div>
+</div>
+
+@code {
+
+    private RegisterModel RegisterModel = new RegisterModel();
+    private bool ShowErrors;
+    private IEnumerable<string> Errors;
+    List<string> roleOptions = new List<string> { "User", "Admin" };
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.Register(RegisterModel);
+
+        if (result.Successful)
+        {
+            NavMan.NavigateTo("/login");
+        }
+        else
+        {
+            Errors = result.Errors;
+            ShowErrors = true;
+        }
+    }
+}

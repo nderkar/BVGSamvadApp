@@ -18,18 +18,25 @@ namespace Samvad_App.Server.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Post> Post { get; set; }
         public DbSet<PostAsset> PostAsset { get; set; }
-        //public DbSet<PostAsset> PostLike { get; set; }
+        public DbSet<PostLike> PostLike { get; set; }
+        public DbSet<PostComment> PostComment { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
-		{
+		{		
+
+			base.OnModelCreating(builder);
+
             //builder.Entity<PostLike>()
-            //.HasRequired<Post>(s => s.CurrentGrade)
-            //.WithMany(g => g.Students)
-            //.HasForeignKey<int>(s => s.CurrentGradeId);
+            //  .HasOne<Post>(s => s.currentPost)
+            //  .WithMany(g => g.postlikes)
+            //  .HasForeignKey(s => s.currentPostid);
 
-            base.OnModelCreating(builder);
+            //builder.Entity<PostLike>()
+            //  .HasOne<ApplicationUser>(s => s.userid)
+            //  .WithOne(g => g.)
+            //  .HasForeignKey(s => s.currentPostid);
 
-			builder.Entity<IdentityRole>()
+            builder.Entity<IdentityRole>()
 				   .HasData(new IdentityRole { Name = "User", NormalizedName = "USER", Id = Guid.NewGuid().ToString(), ConcurrencyStamp = Guid.NewGuid().ToString() });
 			builder.Entity<IdentityRole>()
 				   .HasData(new IdentityRole { Name = "Admin", NormalizedName = "ADMIN", Id = Guid.NewGuid().ToString(), ConcurrencyStamp = Guid.NewGuid().ToString() });

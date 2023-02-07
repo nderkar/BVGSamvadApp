@@ -61,7 +61,7 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<Employee>> GetByPostIdAsync(long postid)
+        public Task<List<Employee>> GetByPostIdAsync(long postid, string userlikescomments)
         {
             throw new NotImplementedException();
         }
@@ -72,6 +72,26 @@ namespace Samvad_App.Server.Repository
         }
 
         public Task<List<Employee>> GetAllAsync(int page, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Employee> UpdateAsync(Employee _object, int inc, string countType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetById(long postid, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetById(long postid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Employee> GetByPostId(long postid, string userId)
         {
             throw new NotImplementedException();
         }

@@ -42,6 +42,12 @@ builder.Services.AddTransient<IPostAssetService, PostAssetService>();
 builder.Services.AddTransient<IRepository<ApplicationUser>, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
 
+builder.Services.AddTransient<IRepository<PostLike>, PostLikeRepository>();
+builder.Services.AddTransient<IPostLikeService, PostLikeService>();
+
+builder.Services.AddTransient<IRepository<PostComment>, PostCommentRespository>();
+builder.Services.AddTransient<IPostCommentService, PostCommentService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		.AddJwtBearer(options =>
 		{

@@ -1,0 +1,83 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@{
+    var post1CommentMenuButton = "post1CommentMenuButton" + comment.commentid.ToString();
+}
+<!-- comment 1 -->
+<div class="d-flex align-items-center my-1">
+    <!-- avatar -->
+    
+    @if (@u.ProfilePicture == null)
+    {
+        <img src="./images//user/defaultuser.jpg"
+         class="rounded-circle me-2"
+         style="width: 38px;height: 38px;object-fit: cover;" />
+    }
+    else
+    {
+        <img src="./images//user/@u.ProfilePicture"
+         class="rounded-circle me-2"
+         style="width: 38px;height: 38px;object-fit: cover;" />
+       
+    }
+    <!-- comment text -->
+    <div class="p-3 rounded comment__input w-100">
+        <!-- comment menu of author -->
+        <div class="d-flex justify-content-end">
+            <!-- icon -->
+            <i class="fas fa-ellipsis-h text-blue pointer"
+               id="@post1CommentMenuButton"
+               data-bs-toggle="dropdown"
+               aria-expanded="false" style="display:none;"></i>
+            <!-- menu -->
+            <ul class="dropdown-menu border-0 shadow"
+                aria-labelledby="@post1CommentMenuButton" style="display:none;">
+                <li class="d-flex align-items-center">
+                    <a class="
+                                                                    dropdown-item
+                                                                    d-flex
+                                                                    justify-content-around
+                                                                    align-items-center
+                                                                    fs-7
+                                                                  "
+                       href="#">
+                        Edit Comment
+                    </a>
+                </li>
+                <li class="d-flex align-items-center">
+                    <a class="
+                                                                    dropdown-item
+                                                                    d-flex
+                                                                    justify-content-around
+                                                                    align-items-center
+                                                                    fs-7
+                                                                  "
+                       href="#">
+                        Delete Comment
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <p class="fw-bold m-0">@u.FirstName @u.LastName</p>
+        <span class="text-muted fs-7">@comment.createddate.ToString("ddd dd MMM hh:mm tt")</span>
+        <p class="m-0 fs-7 bg-gray p-2 rounded">
+            @comment.comment
+        </p>
+    </div>
+</div>
+<!--End COmment-->
+
+@code {
+    [Parameter]
+    public PostCommentModel comment { get; set; }
+    UserModel u { get; set; }
+    string defaultAvatar { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        defaultAvatar = "defaultuser.jpg";
+        u = new UserModel();
+        var response = await Http.GetAsync("api/accounts/" + comment.userid);
+        response.EnsureSuccessStatusCode();
+        u = await response.Content.ReadFromJsonAsync<UserModel>();
+    }
+}

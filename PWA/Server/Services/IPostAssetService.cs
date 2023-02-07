@@ -6,6 +6,6 @@ namespace Samvad_App.Server.Services
     {
         Task<PostAsset> AddPostAsset(PostAsset Postasset);
         Task<PostAsset> GetPostAssetsByAssetId(long assetid);
-        Task<List<PostAsset>> GetPostAssetsByPostId(long postid);
+        Task<List<PostAsset>> GetPostAssetsByPostId(long postid, string userlikescomments);
     }
 }

@@ -56,5 +56,10 @@ namespace Samvad_App.Server.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Post> UpdateCount(Post post, int inc, string countType)
+        {
+            return await _post.UpdateAsync(post, inc, countType);
+        }
     }
 }

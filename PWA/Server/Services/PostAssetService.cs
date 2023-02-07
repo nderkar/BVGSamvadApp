@@ -14,16 +14,17 @@ namespace Samvad_App.Server.Services
         public async Task<PostAsset>AddPostAsset(PostAsset Postasset)
         {
             return await _postAssetService.CreateAsync(Postasset);
-        }      
+        }
 
         public Task<PostAsset> GetPostAssetsByAssetId(long assetid)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<PostAsset>> GetPostAssetsByPostId(long postid)
+        public async Task<List<PostAsset>> GetPostAssetsByPostId(long postid, string userlikescomments)
         {
-            return await _postAssetService.GetByPostIdAsync(postid);
+            return await _postAssetService.GetByPostIdAsync(postid,userlikescomments);
         }
+
     }
 }

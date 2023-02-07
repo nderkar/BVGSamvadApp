@@ -1,0 +1,353 @@
+﻿@using Samvad_App.Shared.Models
+@using System.Net.Http.Json;
+@inject HttpClient Http
+@{
+    var collapspostid = "collapse" + p.postid.ToString();
+    var accordionExample = "accordionExample" + p.postid.ToString();
+    
+}
+<div class="post__comment mt-3 position-relative">
+                                <!-- likes -->
+                                <div class="
+                      d-flex
+                      align-items-center
+                      top-0
+                      start-0
+                      position-absolute
+                    "
+                                 style="height: 50px; z-index: 3">
+
+                                        @if (@plikeCount > 0)
+                                        {
+                                            if (@plikeCount == 1)
+                                            {
+                                            <div class="me-2">
+                                                <i class="text-primary fas fa-thumbs-up"></i>
+                                            </div>
+                                        <p class="m-0 text-muted fs-7">
+                                                <div class="popuptooltip">
+                        @sYou @plikeCount @sLike
+                                                  <span class="popuptooltiptext">
+                                                        @foreach (var u in likeResponse)
+                                                        {
+                                                            <p> @u.FirstName @u.LastName</p>
+                                                        }
+                                                  </span>
+                                                </div>
+                                                </p>
+                                                }
+                                            else {
+                                        <div class="me-2">
+                                            <i class="text-primary fas fa-thumbs-up"></i>
+                                        </div>
+                                        <p class="m-0 text-muted fs-7">
+                                                <div class="popuptooltip">
+                        @sYou @plikeCount @sLikes
+                                                    <span class="popuptooltiptext">
+                                                        @foreach (var u in likeResponse)
+                                                        {
+                                                            <p> @u.FirstName @u.LastName</p>
+                                                        }
+                                                     </span>
+                                                </div>
+                                                </p>
+                                            }
+                                        }
+                                        else
+                                        {
+                                                <div class="me-2">
+                                                    <i class="text-primary fas fa-thumbs-up"></i>
+                                                </div>
+                                                <p class="m-0 text-muted fs-7">
+                                                 @sNoLike
+                                                 </p>
+                                        }
+                                        <!--Phu, Tuan, and 3 others</p-->
+                                </div>
+                                <!-- comments start-->
+                                <div class="accordion" id="@accordionExample">
+                                    <div class="accordion-item border-0">
+                                        <!-- comment collapse -->
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <div class="
+                            accordion-button
+                            collapsed
+                            pointer
+                            d-flex
+                            justify-content-end
+                          "
+                                             data-bs-toggle="collapse"
+                                             data-bs-target="#@collapspostid"
+                                             aria-expanded="false"
+                                             aria-controls="@collapspostid">
+                    @if (@pCommentCount > 0)
+                    {
+                        if (@pCommentCount == 1)
+                        {
+                            
+                                <div class="popuptooltip">
+                                    <p class="m-0">@pCommentCount @sComment</p>
+                                    <span class="popuptooltiptext">
+                                    @foreach (var u in commentResponse)
+                                        {
+                                            <p> @u.FirstName @u.LastName</p>
+                                        }
+                                    </span>
+                                </div>
+                        }
+                        else
+                        {
+                            
+                                <div class="popuptooltip">
+                                <p class="m-0">@pCommentCount @sComments</p>
+                                    <span class="popuptooltiptext">
+                                    @foreach (var u in commentResponse)
+                                        {
+                                            <p> @u.FirstName @u.LastName</p>
+                                        }
+                                    </span>
+                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="m-0">@sNoComment</p>
+                    }
+                                             
+                                            </div>
+                                        </h2>
+                                        <hr />
+                                        <!-- comment & like bar -->
+                                        <div class="d-flex justify-content-around">
+                                        <div class="
+                                                    dropdown-item
+                                                    rounded
+                                                    d-flex
+                                                    justify-content-center
+                                                    align-items-center
+                                                    pointer
+                                                    text-muted
+                                                    p-1
+                                                  "
+                                             @onclick="SaveLike">
+                                            @if (isCurrentUserLike)
+                                            {
+                                                <i class="text-primary fas fa-thumbs-up me-3"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-thumbs-up me-3"></i>
+                                            }
+
+                                            <p class="m-0">Like</p>
+                                        </div>
+                                        <div class="
+                            dropdown-item
+                            rounded
+                            d-flex
+                            justify-content-center
+                            align-items-center
+                            pointer
+                            text-muted
+                            p-1
+                          "
+                                             data-bs-toggle="collapse"
+                                             data-bs-target="#@collapspostid"
+                                             aria-expanded="false"
+                                             aria-controls="@collapspostid">
+                                                <i class="fas fa-comment-alt me-3"></i>
+                                                <p class="m-0">Comment</p>
+                                            </div>
+                                        </div>
+                                        <!-- comment expand -->
+                                        <div id="@collapspostid"
+                                             class="accordion-collapse collapse"
+                                             aria-labelledby="headingTwo"
+                                             data-bs-parent="#@accordionExample">
+                                            <hr />
+                                            <div class="accordion-body">
+                                            <!-- create comment -->
+                                             <div class="d-flex my-1">
+                                            <!-- avatar -->
+                                            <div>
+                                                @if (@currentUser.ProfilePicture == null)
+                                                {
+
+                            <img src="./images//user/@defaultAvatar"
+                             class="rounded-circle me-2"
+                             style="
+                                                                                      width: 38px;
+                                                                                      height: 38px;
+                                                                                      object-fit: cover;
+                                                                                    " />
+                                                }
+                                                else
+                                                {                                                    
+                            <img src="./images//user/@currentUser.ProfilePicture"
+                             class="rounded-circle me-2"
+                             style="
+                                                                                      width: 38px;
+                                                                                      height: 38px;
+                                                                                      object-fit: cover;
+                                                                                    " />
+                                                }
+                                                
+                                            </div>
+                                            <!-- input -->
+                                            <input type="stext"
+                                                   class="form-control border-0 rounded-pill bg-gray m-2"
+                               placeholder="Write a comment" @onkeyup="EnterComment" 
+                               @bind="@CommentText" @oninput="@((e) => { CommentText=(string)e.Value;})" />
+                        <div class="modal-footer 
+                                justify-content-center
+                                align-items-center">
+
+                            <button type="button" class="btn btn-primary w-40" @onclick="SaveComment">Post</button>
+                        </div>
+                  
+                                            </div>
+                                            <!-- end -->
+                    @foreach (var comment in postCommentResponse)
+                    {
+                        <PostCommentUser comment="@comment" />
+                    }
+                                                               
+                                                
+                                            </div>
+                                        </div>
+                                       <!--ddd-->
+                                    </div>
+                                </div>
+                                <!-- end -->
+                            </div>
+
+
+@code {
+    [Parameter]
+    public PostModel p { get; set; }
+    string defaultAvatar { get; set; }
+    PostModel newpostcomment = new PostModel();
+    bool isCurrentUserLike = false;
+    UserModel currentUser = new UserModel();
+    List<UserModel> likeResponse = new List<UserModel>();
+    List<UserModel> commentResponse = new List<UserModel>();
+
+    List<PostCommentModel> postCommentResponse = new List<PostCommentModel>();
+    string sNoLike = "0 like";
+    string sLike = "like";
+    string sLikes = "likes";
+    string sNoComment = "0 comment";
+    string sComment = "comment";
+    string sComments = "comments";
+    string sYou = "";
+    int plikeCount = 0;
+    int pCommentCount = 0;
+    private string CommentText { get; set; } = "";
+    private void UpdateCommentText(ChangeEventArgs e)
+    {
+        CommentText = e.Value.ToString();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        newpostcomment = p;
+        defaultAvatar = "defaultuser.jpg";
+        plikeCount = p.likecount;
+        pCommentCount = p.commentcount;
+        var responseAllLikes = await Http.GetAsync("api/accounts/" + p.postid + "/userlikes");
+        likeResponse = await responseAllLikes.Content.ReadFromJsonAsync<List<UserModel>>();
+        var responseAllCommentUsers = await Http.GetAsync("api/accounts/" + p.postid + "/usercomments");
+        commentResponse = await responseAllCommentUsers.Content.ReadFromJsonAsync<List<UserModel>>();
+        var responseComments = await Http.GetAsync("api/postcomment/" + p.postid );
+        postCommentResponse = await responseComments.Content.ReadFromJsonAsync<List<PostCommentModel>>();
+        var response = await Http.GetAsync("api/accounts");
+        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();   
+        var responsePostLike = await Http.GetAsync("api/postlike/" + p.postid + "/" + currentUser.Id);
+        var likeCount =  responsePostLike.Content.ReadFromJsonAsync<int>();
+        if (likeCount.Result > 0)
+        {           
+            isCurrentUserLike = true;
+            //sYou = "You ";
+            //if (likeResponse.Count > 1)
+            //{
+            //    sLike = "other";
+            //    sLikes = "other";
+            //    sYou = "You, and ";
+            //}
+        }
+
+        //var response = await Http.GetAsync("api/accounts");
+    }
+    private async Task SaveLike()
+    {
+        p.createdby = "nnn";
+        p.modifiedby = currentUser.Id;
+        int oldLikeCount = p.likecount;
+        if(p.postmessage.Trim() == "")
+        {
+            p.postmessage = "Test";
+        }
+        var response = await Http.PostAsJsonAsync("api/postlike", p);
+        PostModel postlikeResponse = await response.Content.ReadFromJsonAsync<PostModel>();
+        if (isCurrentUserLike)
+        {
+            isCurrentUserLike = false;
+            sYou = "";
+            if(postlikeResponse != null)
+            {
+                //if (postlikeResponse.likecount > 0)
+                //{
+                //    sLike = "like";
+                //    sLikes = "likes";
+                //}
+                plikeCount = postlikeResponse.likecount;
+            }            
+        }
+        else
+        {
+            isCurrentUserLike = true;
+            //sYou = "You ";
+            if (postlikeResponse != null)
+            {
+                //if (postlikeResponse.likecount > 1)
+                //{
+                //    sLike = "other";
+                //    sLikes = "other";
+                //    sYou = "You, and ";
+                //}
+                plikeCount = postlikeResponse.likecount;
+            }            
+        }
+        //To fetch all like user list
+        var responseAllLikes = await Http.GetAsync("api/accounts/" + p.postid + "/userlikes");
+        likeResponse = await responseAllLikes.Content.ReadFromJsonAsync<List<UserModel>>();
+    }
+    public async void EnterComment(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await SaveComment();
+        }
+    }
+    private async Task SaveComment()
+    {
+        if(CommentText.Trim() != "")
+        {
+            newpostcomment.createdby = "nnn";
+            newpostcomment.modifiedby = currentUser.Id;
+            newpostcomment.postmessage = CommentText;
+            var responsecom = await Http.PostAsJsonAsync("api/postcomment", newpostcomment);
+            PostModel postcommentResponse = await responsecom.Content.ReadFromJsonAsync<PostModel>();
+            if (postcommentResponse != null)
+            {
+                pCommentCount = postcommentResponse.commentcount;
+            }
+            //To fetch all comment user list
+            var responseAllComments = await Http.GetAsync("api/accounts/" + p.postid + "/usercomments");
+            commentResponse = await responseAllComments.Content.ReadFromJsonAsync<List<UserModel>>();
+            var response_Comments = await Http.GetAsync("api/postcomment/" + p.postid);
+            postCommentResponse = await response_Comments.Content.ReadFromJsonAsync<List<PostCommentModel>>();
+        }
+        
+        CommentText = "";
+    }
+}

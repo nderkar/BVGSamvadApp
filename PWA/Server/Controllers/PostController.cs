@@ -21,11 +21,6 @@ namespace Samvad_App.Server.Controllers
         {
             return await _PostService.GetAllPost(page,size);
         }
-        //[HttpGet]
-        //public async Task<List<Post>> GetAll(string userId)
-        //{
-        //    return await _PostService.GetAllPostByUserAsync(userId);
-        //}
         [HttpGet("{id}")]
         public async Task<Post> Get(long id)
         {

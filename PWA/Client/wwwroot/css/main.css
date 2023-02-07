@@ -498,3 +498,32 @@ img.hover-shadow {
     aspect-ratio: 16/9;
     width: 100%;
 }
+
+
+.popuptooltip {
+    position: relative;
+    display: inline-block;
+   /* border-bottom: 1px dotted black;*/
+}
+
+    .popuptooltip .popuptooltiptext {
+        visibility: hidden;
+        width: 150px;
+        background-color: rgb(4, 28, 122, 0.70);
+        color:#fff;
+        text-align: left;
+        font-size: 12px;
+        border-radius: 6px;
+        padding: 2px 5px;
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 50%;
+        margin-left: -60px;
+    }
+
+    .popuptooltip:hover .popuptooltiptext {
+        visibility: visible;
+        border-bottom: 1px solid black;
+    }

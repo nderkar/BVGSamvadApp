@@ -40,7 +40,12 @@ namespace Samvad_App.Server.Controllers
 			return await _userService.GetUserAsync(id);
 
 		}
-		[HttpPost]
+        [HttpGet("{id}/{userlikescomments}")]
+        public async Task<List<ApplicationUser>> Get(long id,string userlikescomments)
+        {
+            return await _userService.GetPostLikeByPostId(id, userlikescomments);
+        }
+        [HttpPost]
 		public async Task<IActionResult> Post([FromBody] RegisterModel model)
 		{
 			var newUser = new ApplicationUser

@@ -10,6 +10,6 @@ namespace Samvad_App.Server.Services
         Task<List<Post>> GetAllPost(int page,int size);
         Task<List<Post>> GetAllPostByUserAsync(string userId);
         Task<Post> GetPost(long postid);
-        
+        Task<Post> UpdateCount(Post post, int cnt,string countType);
     }
 }

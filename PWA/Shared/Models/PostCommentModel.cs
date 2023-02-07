@@ -2,9 +2,9 @@
 
 namespace Samvad_App.Shared.Models
 {
-    public class PostLikeModel
+    public class PostCommentModel
     {
-        public long likeid
+        public long commentid
         {
             get;
             set;
@@ -28,7 +28,14 @@ namespace Samvad_App.Shared.Models
             get;
             set;
         }
-        //public PostModel currentPost { get; set; }
-        //public UserModel user { get; }
+        [Display(Name = "Comment")]
+        public string comment { get; set; }
+        [Display(Name = "ModifiedDate")]
+        public DateTime modifieddate
+        {
+            get;
+            set;
+        }
+        public bool isdeleted { get; set; }
     }
 }

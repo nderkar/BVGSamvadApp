@@ -20,6 +20,7 @@ namespace Samvad_App.Server.Models
         public string extlink1 { get; set; }
         public string extlink2 { get; set; }
         public bool isdeleted { get; set; }
+        public ICollection<PostLike> postlikes { get; set; }
         //public IList<Comments>
     }
 }

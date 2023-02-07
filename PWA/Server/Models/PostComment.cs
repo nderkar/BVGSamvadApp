@@ -3,20 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Samvad_App.Server.Models
 {
-    [Table("PostLike", Schema = "dbo")]
-    public class PostLike
+    [Table("PostComment", Schema = "dbo")]
+    public class PostComment
     {
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public long likeid { get; set; }        
+        public long commentid { get; set; }
         [Required]
         public string userid { get; set; }
         public DateTime createddate { get; set; }
         [Required]
         public long postid { get; set; }
-        //[Required]
-        //public Post currentPost { get; set; }
-        //public ApplicationUser user { get; }
+        [Required]
+        public string comment { get; set; }
+        public DateTime modifieddate { get; set; }
+        public bool isdeleted { get; set; }
     }
 }

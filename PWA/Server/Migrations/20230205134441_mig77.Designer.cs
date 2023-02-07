@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Samvad_App.Server.Data;
 
@@ -11,9 +12,10 @@ using Samvad_App.Server.Data;
 namespace Samvad_App.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230205134441_mig77")]
+    partial class mig77
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,15 +53,15 @@ namespace Samvad_App.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b1594450-26f7-4658-8fea-bf23e5c8dffb",
-                            ConcurrencyStamp = "8d41a3d0-96e5-4a20-9405-68f16e4d6484",
+                            Id = "d38a356f-7cfd-4e80-8c75-853a128349bf",
+                            ConcurrencyStamp = "d7eb04f9-d9b6-404f-9c02-c965274034e9",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "3d75fc50-849b-43b9-9d0e-70107aea241d",
-                            ConcurrencyStamp = "2511a571-41eb-48d6-8ad6-f9415edc873f",
+                            Id = "d8bed3e2-c546-4e9e-8335-bab8f543b487",
+                            ConcurrencyStamp = "f44de444-0efb-46be-891e-e923f5217c24",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -363,39 +365,6 @@ namespace Samvad_App.Server.Migrations
                     b.ToTable("PostAsset", "dbo");
                 });
 
-            modelBuilder.Entity("Samvad_App.Server.Models.PostComment", b =>
-                {
-                    b.Property<long>("commentid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("commentid"), 1L, 1);
-
-                    b.Property<string>("comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("createddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("isdeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("modifieddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("postid")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("userid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("commentid");
-
-                    b.ToTable("PostComment", "dbo");
-                });
-
             modelBuilder.Entity("Samvad_App.Server.Models.PostLike", b =>
                 {
                     b.Property<long>("likeid")
@@ -407,7 +376,10 @@ namespace Samvad_App.Server.Migrations
                     b.Property<DateTime>("createddate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("postid")
+                    b.Property<long>("currentPostid")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("postid")
                         .HasColumnType("bigint");
 
                     b.Property<string>("userid")
@@ -476,9 +448,7 @@ namespace Samvad_App.Server.Migrations
                 {
                     b.HasOne("Samvad_App.Server.Models.Post", null)
                         .WithMany("postlikes")
-                        .HasForeignKey("postid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("postid");
                 });
 
             modelBuilder.Entity("Samvad_App.Server.Models.Post", b =>

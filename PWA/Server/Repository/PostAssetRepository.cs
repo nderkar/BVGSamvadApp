@@ -53,10 +53,9 @@ namespace Samvad_App.Server.Repository
         {
             return _dbContext.PostAsset.AsQueryable();
         }
-        public async  Task<List<PostAsset>> GetByPostIdAsync(long postid)
+        public async  Task<List<PostAsset>> GetByPostIdAsync(long postid, string userlikescomments)
         {
             List<PostAsset> pAssetList = await GetAllPostAsset().Where(u => u.postid == postid).ToListAsync(); 
-            //await _dbContext.PostAsset.Select(x => x.postid == postid).ToListAsync();
             return pAssetList;
         }
 
@@ -71,6 +70,26 @@ namespace Samvad_App.Server.Repository
         }
 
         public Task<List<PostAsset>> GetAllAsync(int page, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PostAsset> UpdateAsync(PostAsset _object, int inc, string countType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetById(long postid, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetById(long postid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PostAsset> GetByPostId(long postid, string userId)
         {
             throw new NotImplementedException();
         }

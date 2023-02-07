@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Samvad_App.Server.Data;
 
@@ -11,9 +12,10 @@ using Samvad_App.Server.Data;
 namespace Samvad_App.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230205135648_mig75")]
+    partial class mig75
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,15 +53,15 @@ namespace Samvad_App.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b1594450-26f7-4658-8fea-bf23e5c8dffb",
-                            ConcurrencyStamp = "8d41a3d0-96e5-4a20-9405-68f16e4d6484",
+                            Id = "494e1687-731a-44ab-b6aa-a8ab861c1ec7",
+                            ConcurrencyStamp = "4b1388a3-2446-499c-a43b-3a877c21fc8a",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "3d75fc50-849b-43b9-9d0e-70107aea241d",
-                            ConcurrencyStamp = "2511a571-41eb-48d6-8ad6-f9415edc873f",
+                            Id = "bec16006-f0d8-4d67-a4ca-e2bd8250fcd4",
+                            ConcurrencyStamp = "47168455-28d1-4965-a88c-17141905480d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -361,39 +363,6 @@ namespace Samvad_App.Server.Migrations
                     b.HasKey("assetid");
 
                     b.ToTable("PostAsset", "dbo");
-                });
-
-            modelBuilder.Entity("Samvad_App.Server.Models.PostComment", b =>
-                {
-                    b.Property<long>("commentid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("commentid"), 1L, 1);
-
-                    b.Property<string>("comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("createddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("isdeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("modifieddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("postid")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("userid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("commentid");
-
-                    b.ToTable("PostComment", "dbo");
                 });
 
             modelBuilder.Entity("Samvad_App.Server.Models.PostLike", b =>

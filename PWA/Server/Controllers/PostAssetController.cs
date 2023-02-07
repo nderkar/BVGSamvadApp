@@ -18,7 +18,7 @@ namespace Samvad_App.Server.Controllers
         [HttpGet("{id}")]
         public async Task<List<PostAsset>> Get(long id)
         {
-            return await _PostAssetService.GetPostAssetsByPostId(id);
+            return await _PostAssetService.GetPostAssetsByPostId(id,"asset");
         }
     }
 }

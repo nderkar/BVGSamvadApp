@@ -50,6 +50,16 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
+        public Task<int> GetById(long postid, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetById(long postid)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Post> GetByIdAsync(int Id)
         {
             throw new NotImplementedException();
@@ -65,7 +75,12 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<Post>> GetByPostIdAsync(long postid)
+        public Task<Post> GetByPostId(long postid, string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Post>> GetByPostIdAsync(long postid, string userlikescomments)
         {
             throw new NotImplementedException();
         }
@@ -76,6 +91,21 @@ namespace Samvad_App.Server.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-
+        public async Task<Post> UpdateAsync(Post post, int cnt, string countType)
+        {
+            if(countType == "like")
+            {
+                post.likecount = cnt;
+                _dbContext.Post.Attach(post).Property(x => x.likecount).IsModified = true;
+            }
+            else
+            {
+                post.commentcount = cnt;
+                _dbContext.Post.Attach(post).Property(x => x.commentcount).IsModified = true;
+            }
+            await _dbContext.SaveChangesAsync();
+            return post;
+        }
+        
     }
 }

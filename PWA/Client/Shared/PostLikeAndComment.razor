@@ -167,7 +167,7 @@
                                             <hr />
                                             <div class="accordion-body">
                                             <!-- create comment -->
-                                             <div class="d-flex my-1">
+                                             <div class="d-flex">
                                             <!-- avatar -->
                                             <div>
                                                 @if (@currentUser.ProfilePicture == null)
@@ -194,15 +194,14 @@
                                                 
                                             </div>
                                             <!-- input -->
-                                            <input type="stext"
-                                                   class="form-control border-0 rounded-pill bg-gray m-2"
-                               placeholder="Write a comment" @onkeyup="EnterComment" 
+                        <input type="text"
+                               class="form-control border-0 rounded-pill bg-gray m-1"
+                               placeholder="Write a comment" @onkeyup="EnterComment"
                                @bind="@CommentText" @oninput="@((e) => { CommentText=(string)e.Value;})" />
-                        <div class="modal-footer 
+                        <div class="
                                 justify-content-center
                                 align-items-center">
-
-                            <button type="button" class="btn btn-primary w-40" @onclick="SaveComment">Post</button>
+                            <button type="button" class="btn btn-primary w-20 m-1" @onclick="SaveComment">Post</button>
                         </div>
                   
                                             </div>

@@ -107,7 +107,7 @@
                             <div class="dropzone @dropClass rounded mt-2">
                                 <InputFile multiple
                                            OnChange="@HandleFileInputChange"
-                                               accept="image/png,image/gif,image/jpeg,video/mp4,audio/mp4,audio/mpeg,application/mp4"
+                                               accept="image/png,image/gif,image/jpeg,application/pdf,video/mp4,audio/mp4,audio/mpeg,application/mp4"
                                            @ondragenter="HandleDragEnter"
                                            @ondragleave="HandleDragLeave"></InputFile>
                                 <div class="row" style="display:block">
@@ -261,6 +261,12 @@
 @code {
     [Parameter]   
     public EventCallback<PostModel> onPostCreated{ get; set; }
+    const int MaxFileSizeMB = 500;
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; // 500MB
+    private string dropClass = "";
+    private bool fileSizeError = false;
+    private bool fileTypeError = false;
+    private List<IBrowserFile> selectedFiles = new List<IBrowserFile>();
     List<string> imgUrls = new List<string>();
     public List<FileData> fileData = new List<FileData>();
     PostModel post = new PostModel();    
@@ -285,7 +291,7 @@
 
             if (selectedFiles != null)
             {
-                foreach (IBrowserFile file in selectedFiles)
+                foreach (var file in selectedFiles)
                 {
                     try
                     {
@@ -299,12 +305,14 @@
                             fileExtension = file.Name.Substring(dotIndex + 1);
                         }
 
-                        var payload = new SaveFile { 
-                            Data = buffers, 
-                            PostId = personResponse.postid,
-                            FileExtension = fileExtension,
-                            Size = file.Size
-                        };
+                        var payload = new SaveFile
+                            {
+                                Data = buffers,
+                                PostId = personResponse.postid,
+                                FileExtension = fileExtension,
+                                Size = file.Size,
+                                FileName = file.Name
+                            };
                         var responseAsset = await Http.PostAsJsonAsync("/api/FileUpload/save-file", payload);
 
                        //var postAsset =  await responseAsset.Content.ReadFromJsonAsync<PostAssets>();
@@ -325,12 +333,7 @@
     }
 
     /*Drag drop*/
-    const int MaxFileSizeMB = 500;
-    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; // 500MB
-    private string dropClass = "";
-    private bool fileSizeError = false;
-    private bool fileTypeError = false;
-    private List<IBrowserFile> selectedFiles = new List<IBrowserFile>();
+   
     private void HandleDragEnter()
     {
         dropClass = "dropzone-drag";
@@ -346,7 +349,7 @@
         fileSizeError = false;
         fileTypeError = false;
         List<string> acceptedFileTypes = new List<string>() 
-        { "image/png", "image/jpeg", "image/gif", "video/mp4", "audio/mp4","audio/mpeg","application/mp4" };
+        { "image/png", "image/jpeg","application/pdf", "image/gif", "video/mp4", "audio/mp4","audio/mpeg","application/mp4" };
         foreach (IBrowserFile file in e.GetMultipleFiles(5))
         {
             bool error = false;

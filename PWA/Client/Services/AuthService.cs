@@ -50,5 +50,16 @@ namespace Samvad_App.Client.Services
 			((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
 			_httpClient.DefaultRequestHeaders.Authorization = null;
 		}
-	}
+
+        public Task<RegisterResult> ChabgePassword(RegisterModel registerModel)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<RegisterResult> ChangePassword(RegisterModel registerModel)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/accounts", registerModel);
+            RegisterResult result = await response.Content.ReadFromJsonAsync<RegisterResult>();
+            return result;
+        }
+    }
 }

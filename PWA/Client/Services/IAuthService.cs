@@ -6,6 +6,7 @@ namespace Samvad_App.Client.Services
 	{
 		Task<LoginResult> Login(LoginModel loginModel);
 		Task<RegisterResult> Register(RegisterModel registerModel);
-		Task Logout();
+        Task<RegisterResult> ChabgePassword(RegisterModel registerModel);
+        Task Logout();
 	}
 }

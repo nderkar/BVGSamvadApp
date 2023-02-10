@@ -28,7 +28,15 @@ namespace Samvad_App.Server.Controllers
         public async Task<IActionResult> SaveToPhysicalLocation([FromBody] SaveFile saveFile)
         {
             string rootPath = appSettingVariables.FileUploadPath;
-            string fileName = $@"{Guid.NewGuid()}.{saveFile.FileExtension}";
+            string fileName = "";
+            if (saveFile.FileExtension.ToLower() == "pdf")
+            {
+                fileName = saveFile.FileName;
+            }
+            else
+            {
+                fileName = $@"{Guid.NewGuid()}.{saveFile.FileExtension}";
+            }
             string fullFileName = $@"{rootPath}\{fileName}";
             using (var fileStream = System.IO.File.Create(fullFileName))
             {

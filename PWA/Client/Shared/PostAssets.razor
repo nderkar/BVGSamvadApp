@@ -55,12 +55,37 @@
     var i = 1;
     @foreach (var p in postAssetList)
     {
-        if (p.assettype.ToLower() != "mp4")
+        if (p.assettype.ToLower() != "mp4" && p.assettype.ToLower() != "mp3" && p.assettype.ToLower() != "pdf")
         {
             <div class="singleimg">
                 <img src="./postassets/@p.asseturl" style="width:100%" onclick="openModal('@post.postid');currentSlide('@post.postid',@i)" class="hover-shadow cursor">
             </div>
             i += 1;
+        }
+    }
+    @foreach (var p in postAssetList)
+    {
+        if (p.assettype.ToLower() == "mp3")
+        {
+            <div class="singleimg m-4">
+                <audio style="width:100%"
+        controls
+               src="./postassets/@p.asseturl">
+                    <a href="./postassets/@p.asseturl">
+                Download audio
+            </a>
+    </audio>
+            </div>
+        }
+    }
+    @foreach (var p in postAssetList)
+    {
+        if (p.assettype.ToLower() == "pdf")
+        {
+            <div class="singleimg m-4">
+                <p class="text-muted">PDF Document</p>
+                <a href="./postassets/@p.asseturl" target="_blank">@p.asseturl.Replace(".pdf","").Replace(".PDF","")</a>                
+            </div>
         }
     }
     <!--Gallery-->

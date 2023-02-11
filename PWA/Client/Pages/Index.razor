@@ -25,13 +25,13 @@
     </Authorized>
 </AuthorizeView>
 @code{
-    UserModel currentUser = new UserModel();
-    protected override async Task OnInitializedAsync()
-    {
-        var module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/site.js");
-        await module.InvokeVoidAsync("page_Load","");
-        var response = await Http.GetAsync("api/accounts");
-        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
-        await base.OnInitializedAsync();
-    }
+    //UserModel currentUser = new UserModel();
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    var module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/site.js");
+    //    await module.InvokeVoidAsync("page_Load","");
+    //    var response = await Http.GetAsync("api/accounts");
+    //    currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+    //    await base.OnInitializedAsync();
+    //}
 }

@@ -42,7 +42,7 @@ namespace Samvad_App.Client.Services
 				return result;
 			}
 			return result;
-		}
+			}
 
 		public async Task Logout()
 		{
@@ -51,14 +51,10 @@ namespace Samvad_App.Client.Services
 			_httpClient.DefaultRequestHeaders.Authorization = null;
 		}
 
-        public Task<RegisterResult> ChabgePassword(RegisterModel registerModel)
+        public async Task<ChangePasswordResult> ChangePassword(ChangePasswordModel changePasswordModel)
         {
-            throw new NotImplementedException();
-        }
-        public async Task<RegisterResult> ChangePassword(RegisterModel registerModel)
-        {
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/accounts", registerModel);
-            RegisterResult result = await response.Content.ReadFromJsonAsync<RegisterResult>();
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/accounts/changepassword", changePasswordModel);
+            ChangePasswordResult result = await response.Content.ReadFromJsonAsync<ChangePasswordResult>();
             return result;
         }
     }

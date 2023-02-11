@@ -3,6 +3,8 @@ using Samvad_App.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Samvad_App.Server.Services;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
+using Samvad_App.Client.Pages;
 
 namespace Samvad_App.Server.Controllers
 {
@@ -77,5 +79,33 @@ namespace Samvad_App.Server.Controllers
 
 			return Ok(new RegisterResult { Successful = true });
 		}
-	}
+        [HttpPost]
+        [Route("changepassword")]
+        public async Task<IActionResult> Put([FromBody] Shared.Models.ChangePasswordModel model)
+        {
+            
+            if (User.Identity.Name != null)
+            {
+                currentUser = await _signInManager.UserManager.FindByEmailAsync(User.Identity.Name);
+            }
+            var resultCheck = await _signInManager.PasswordSignInAsync(currentUser.Email, model.OldPassword, false, false);
+
+            if (!resultCheck.Succeeded)
+            {
+                return BadRequest(new ChangePasswordResult { Successful = false, Error = "Username and password are invalid." });
+            }
+           
+            var result = await _userManager.ChangePasswordAsync(currentUser, model.OldPassword,model.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(x => x.Description);
+
+                return BadRequest(new ChangePasswordResult { Successful = false, Errors = errors });
+            }
+
+
+            return Ok(new ChangePasswordResult { Successful = true });
+        }
+    }
 }

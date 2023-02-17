@@ -15,6 +15,11 @@ namespace Samvad_App.Shared.Models
         public string FileName { get; set; }
         //public List<FileData> Files { get; set; }
     }
+    public class SaveMultipleFile
+    {
+        //public long PostId { get; set; }
+        public List<FileData> Files { get; set; }
+    }
 
     public class FileData
     {
@@ -22,5 +27,6 @@ namespace Samvad_App.Shared.Models
         public string FileType { get; set; }
         public string FileExtension { get; set; }
         public long Size { get; set; }
+        public string FileName { get; set; }
     }
 }

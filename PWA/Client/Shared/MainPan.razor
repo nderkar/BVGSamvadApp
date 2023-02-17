@@ -1,5 +1,6 @@
 ﻿@using Samvad_App.Shared.Models
 @inject HttpClient Http
+
 <AuthorizeView>
     <Authorized>
 <!-- ================= Timeline ================= -->
@@ -12,31 +13,9 @@
         <!-- posts -->
         
         <!-- p 2 -->
-                @foreach (var p in orderedList)
-                {
-                    <div class="bg-white p-4 rounded shadow mt-3">
-                        <!-- author -->
-                        <PostOwner p="@p"/>
-                        <!-- post content -->
-                        <div class="mt-3">
-                            <!-- content -->
-                            <div>
-                                <p>
-                                    @p.postmessage
-                                </p>
-                                <!-- Photo Grid -->
-                              <PostAssets post="@p"/>
-                            </div>
-                            <!-- likes & comments -->
-                            <PostLikeAndComment p="@p"/>
-                        </div>
-                    </div>
-
-                    <!--Gallery-->
-
-                    <!--End-->
-                }
-
+                
+                <InfiniteScrolling isNewPostCreated="@isNewPostCreated" />
+                
     </div>
 </div>
 
@@ -47,26 +26,147 @@
 
 @code {
     UserModel currentUser = new UserModel();
-    List<PostModel> postList = new List<PostModel>();
-   
-    IEnumerable<PostModel> orderedList => postList.OrderByDescending(i => i.createdate);
+
+    long isNewPostCreated = 0;
+
     protected override async Task OnInitializedAsync()
     {
+        isNewPostCreated = 0;
         var response = await Http.GetAsync("api/accounts");
         currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
-        var responsePosts = await Http.GetAsync("api/post");
-        responsePosts.EnsureSuccessStatusCode();
-        postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
+
     }
     private async Task RefreshPost(PostModel newPost)
     {
+        isNewPostCreated = newPost.postid;
+        
         //postList.Add(newPost);
         //orderedList.Append(newPost);
 
-        postList = new List<PostModel>();
-        var responsePosts = await Http.GetAsync("api/post");
-        responsePosts.EnsureSuccessStatusCode();
-        postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
+        //postList = new List<PostModel>();
+        //var responsePosts = await Http.GetAsync("api/post");
+        //responsePosts.EnsureSuccessStatusCode();
+        //postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
     }
 
+    
+
+    /*
+    [Parameter]
+    public ItemsProviderRequestDelegate ItemsProvider { get; set; }
+
+    [Parameter]
+    public RenderFragment ItemTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment LoadingTemplate { get; set; }
+
+    [JSInvokable]
+    public async Task LoadMoreItems()
+    {
+        if (_loading)
+            return;
+
+        _loading = true;
+        try
+        {
+            _loadItemsCts ??= new CancellationTokenSource();
+
+            StateHasChanged(); // Allow the UI to display the loading indicator
+            try
+            {
+                var newItems = await ItemsProvider(new InfiniteScrollingItemsProviderRequest(postList.Count, _loadItemsCts.Token));
+
+                var previousCount = postList.Count;
+                postList.AddRange(newItems);
+
+                if (postList.Count == previousCount)
+                {
+                    _enumerationCompleted = true;
+                }
+                else
+                {
+                    await _instance.InvokeVoidAsync("onNewItems");
+                }
+            }
+            catch (OperationCanceledException oce) when (oce.CancellationToken == _loadItemsCts.Token)
+            {
+                // No-op; we canceled the operation, so it's fine to suppress this exception.
+            }
+        }
+        finally
+        {
+            _loading = false;
+        }
+
+        StateHasChanged(); // Display the new items and hide the loading indicator
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Initialize the IntersectionObserver
+        if (firstRender)
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./infinite-scrolling.js");
+
+            var responsePosts = await Http.GetAsync("api/post/"+ PageNumber.ToString() +"/" +  PageSize.ToString());
+            responsePosts.EnsureSuccessStatusCode();
+            postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
+
+            _currentComponentReference = DotNetObjectReference.Create(this);
+            _instance = await _module.InvokeAsync<IJSObjectReference>("initialize", _lastItemIndicator, _currentComponentReference);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        // Cancel the current load items operation
+        if (_loadItemsCts != null)
+        {
+            _loadItemsCts.Dispose();
+            _loadItemsCts = null;
+        }
+
+        // Stop the IntersectionObserver
+        if (_instance != null)
+        {
+            await _instance.InvokeVoidAsync("dispose");
+            await _instance.DisposeAsync();
+            _instance = null;
+        }
+
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+        }
+
+        _currentComponentReference?.Dispose();
+    }
+    public sealed class InfiniteScrollingItemsProviderRequest
+    {
+        public InfiniteScrollingItemsProviderRequest(int startIndex, CancellationToken cancellationToken)
+        {
+            StartIndex = startIndex;
+
+            CancellationToken = cancellationToken;
+
+            LoadMorePost(startIndex);
+        }
+        List<PostModel> postList { get; set; }
+        public int PageSize = 5;
+        public int StartIndex { get; }
+        public CancellationToken CancellationToken { get; }
+        public async Task  LoadMorePost(int PageNumber)
+        {
+            HttpClient Http = new HttpClient();
+            var responsePosts = await Http.GetAsync("api/post/" + PageNumber.ToString() + "/" + PageSize.ToString());
+            responsePosts.EnsureSuccessStatusCode();
+            postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
+        }
+        
+    }
+
+ 
+    public delegate Task<IEnumerable<PostModel>> ItemsProviderRequestDelegate(InfiniteScrollingItemsProviderRequest request);
+    */
 }

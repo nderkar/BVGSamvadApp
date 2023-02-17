@@ -16,7 +16,7 @@ namespace Samvad_App.Server.Controllers
             _PostService = PostService;
             _signInManager = signInManager;
         }
-        [HttpGet]
+        [HttpGet("{page}/{size}")]
         public async Task<List<Post>> GetAll(int page=0,int size=10)
         {
             return await _PostService.GetAllPost(page,size);

@@ -266,9 +266,10 @@
     private string dropClass = "";
     private bool fileSizeError = false;
     private bool fileTypeError = false;
-    private List<IBrowserFile> selectedFiles = new List<IBrowserFile>();
+    private List<IBrowserFile> selectedFiles;
+    private SaveMultipleFile saveMultipleFile;
     List<string> imgUrls = new List<string>();
-    public List<FileData> fileData = new List<FileData>();
+    public FileData fileData = new FileData();
     PostModel post = new PostModel();    
     IJSObjectReference JsObjectRef { get; set; }
     string defaultAvatar { get; set; }
@@ -279,6 +280,9 @@
         var response = await Http.GetAsync("api/accounts");
         currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
         JsObjectRef = await js.InvokeAsync<IJSObjectReference>("import", "/js/Modal.js");
+        selectedFiles = new List<IBrowserFile>();
+        saveMultipleFile = new SaveMultipleFile();
+        saveMultipleFile.Files = new List<FileData>();
     }
 
     private async Task SaveToServer()
@@ -291,49 +295,107 @@
 
             if (selectedFiles != null)
             {
-                foreach (var file in selectedFiles)
+                var result = from s in saveMultipleFile.Files
+                             join p in selectedFiles on s.FileName equals p.Name
+                             select s;
+
+
+                foreach (var saveFile in result) 
                 {
                     try
                     {
+                        var payload = new SaveFile
+                            {
+                                Data = saveFile.Data,
+                                PostId = personResponse.postid,
+                                FileExtension = saveFile.FileExtension,
+                                Size = saveFile.Size,
+                                FileName = saveFile.FileName
+                            };
+                        var responseAsset = await Http.PostAsJsonAsync("/api/FileUpload/save-file", payload);
+
+                        //bool isExist = false;
+                        //if (selectedFiles.Any(i => i.Name == saveFile.FileName))
+                        //{
+
+                        //}
+                        /*
+                            foreach(var f in selectedFiles)
+                            {
+                            if(f.Name == saveFile.FileName)
+                                {
+                                isExist = true;
+                        break;
+                        }
+                        }
+                        if (isExist)
+                            {
+                            var payload = new SaveFile
+                                    {
+                                    Data = saveFile.Data,
+                                    PostId = personResponse.postid,
+                                    FileExtension = saveFile.FileExtension,
+                                    Size = saveFile.Size,
+                                    FileName = saveFile.FileName
+                                };
+                            var responseAsset = await Http.PostAsJsonAsync("/api/FileUpload/save-file", payload);
+                        }
+
+                        */
+                        //var postAsset =  await responseAsset.Content.ReadFromJsonAsync<PostAssets>();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string err = ex.Message;
+                    }
+                }
+                    /*
+                        foreach (var file in selectedFiles)
+                        {
+                        try
+                        {
                         var buffers = new byte[file.Size];
                         await file.OpenReadStream(MaxFileSize).ReadAsync(buffers);
                         string imageType = file.ContentType;
                         int dotIndex = file.Name.LastIndexOf(".");
                         string fileExtension = "";
-                        if (dotIndex > 0)
-                        {
-                            fileExtension = file.Name.Substring(dotIndex + 1);
-                        }
-
-                        var payload = new SaveFile
+                            if (dotIndex > 0)
                             {
+                        fileExtension = file.Name.Substring(dotIndex + 1);
+                            }
+
+                                var payload = new SaveFile
+                                {
                                 Data = buffers,
                                 PostId = personResponse.postid,
                                 FileExtension = fileExtension,
                                 Size = file.Size,
-                                FileName = file.Name
-                            };
+                            FileName = file.Name
+                        };
                         var responseAsset = await Http.PostAsJsonAsync("/api/FileUpload/save-file", payload);
 
-                       //var postAsset =  await responseAsset.Content.ReadFromJsonAsync<PostAssets>();
+                        //var postAsset =  await responseAsset.Content.ReadFromJsonAsync<PostAssets>();
 
                     }
                     catch (Exception ex)
-                    {
-                        //string err = ex.Message;
-                    }
+                        {
+                        string err = ex.Message;
                 }
+                }
+            */
             }
 
         }
         post.postmessage = "";
         selectedFiles.Clear();
+        saveMultipleFile.Files.Clear();
         await JsObjectRef.InvokeVoidAsync("closeModalWindow", "#createModal");
         await onPostCreated.InvokeAsync(personResponse);
     }
 
     /*Drag drop*/
-   
+
     private void HandleDragEnter()
     {
         dropClass = "dropzone-drag";
@@ -369,6 +431,25 @@
             if (!error)
             {
                 selectedFiles.Add(file);
+
+
+                var buffers = new byte[file.Size];
+                await file.OpenReadStream(MaxFileSize).ReadAsync(buffers);
+                string imageType = file.ContentType;
+                int dotIndex = file.Name.LastIndexOf(".");
+                string fileExtension = "";
+                if (dotIndex > 0)
+                {
+                    fileExtension = file.Name.Substring(dotIndex + 1);
+                }
+                fileData = new FileData(){
+
+                        Data = buffers,
+                        FileExtension = fileExtension,
+                        Size = file.Size,
+                        FileName = file.Name
+                    };
+                saveMultipleFile.Files.Add(fileData);
             }
 
         }
@@ -376,6 +457,7 @@
     }
     private void RemoveFile(IBrowserFile removefile)
     {
+
         selectedFiles.Remove(removefile);
        
     }

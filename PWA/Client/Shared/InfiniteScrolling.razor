@@ -1,0 +1,138 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@using System.Threading
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+@foreach (var p in postList)
+{
+    <div class="bg-white p-4 rounded shadow mt-3">
+        <!-- author -->
+        <PostOwner p="@p" />
+        <!-- post content -->
+        <div class="mt-3">
+            <!-- content -->
+            <div>
+                <p>
+                    @p.postmessage
+                </p>
+                <!-- Photo Grid -->
+                <PostAssets post="@p" />
+            </div>
+            <!-- likes & comments -->
+            <PostLikeAndComment p="@p" />
+        </div>
+    </div>
+
+    <!--Gallery-->
+    <!--End-->
+}
+
+
+
+@if (StopLoading)
+{
+    <div id="list-end" class="mt-5 mb-5 p-5">
+        <p>End Of Post</p>
+    </div>
+}
+<div id="list-end" class="mt-5 mb-5 p-5">
+    <p></p>
+    @if (IsLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    @if(@isNewPostCreated > 0)
+    {
+        isNewPostCreated = 0;
+        PageNumber = 0;
+        OnAfterRenderAsync(true);
+    }
+</div>
+
+@code {
+    [Parameter]
+    public long isNewPostCreated { get; set; }
+    bool IsLoading { get; set; } = false;
+
+    int PageSize = 10;
+
+    int PageNumber = 0;
+    bool StopLoading = false;
+    List<PostModel> postList = new List<PostModel>();
+    //IEnumerable<PostModel> orderedList => postList.OrderByDescending(i => i.createdate);
+
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            postList = new List<PostModel>();
+            await LoadMore();
+            await InitJsListenerAsync();
+        }
+    }
+
+    protected async Task InitJsListenerAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("ScrollList.Init", "list-end", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public async Task LoadMore()
+    {
+        if (!IsLoading)
+        {
+            IsLoading = true;
+
+            StateHasChanged();
+
+            await Task.Delay(400);
+
+            var responsePosts = await Http.GetAsync("api/post/" + PageNumber.ToString() + "/" + PageSize.ToString());
+            responsePosts.EnsureSuccessStatusCode();
+            List<PostModel>  _postList = await responsePosts.Content.ReadFromJsonAsync<List<PostModel>>();
+            if(_postList.Count>0)
+            {
+                foreach(var ap in _postList)
+                {
+                    postList.Add(ap);
+                }               
+            }
+            PageNumber++;
+
+            IsLoading = false;
+
+            StateHasChanged();
+
+
+            //at the end of pages or results stop loading anymore
+            if (_postList == null)
+            {
+                await StopListener();
+            }
+            if (_postList.Count <= 0)
+            {
+                await StopListener();
+            }
+        }
+    }
+
+    public async Task StopListener()
+    {
+        StopLoading = true;
+        IsLoading = false;
+        await JsRuntime.InvokeVoidAsync("ScrollList.RemoveListener");
+        StateHasChanged();
+    }
+
+
+    public void Dispose()
+    {
+        JsRuntime.InvokeVoidAsync("ScrollList.RemoveListener");
+    }
+
+}

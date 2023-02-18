@@ -3,9 +3,37 @@
 @using System.Threading
 @inject IJSRuntime JsRuntime
 @implements IDisposable
+@{
+    var cnt = 0;
+    var className = "";
+}
 @foreach (var p in postList)
 {
-    <div class="bg-white p-4 rounded shadow mt-3">
+    @if (@cnt == 0)
+    {
+        if (userRoles != null)
+        {
+            if (userRoles.Contains("Admin"))
+            {
+                className = "first-childadmin";
+            }
+            else
+            {
+                className = "first-childuser";
+            }
+        }
+        else
+        {
+            className = "first-childuser";
+        }
+    }
+    else
+    {
+        className = "";
+    }
+
+   
+    <div class="bg-white p-3 @className mt-2 rounded shadow">
         <!-- author -->
         <PostOwner p="@p" />
         <!-- post content -->
@@ -22,9 +50,9 @@
             <PostLikeAndComment p="@p" />
         </div>
     </div>
-
     <!--Gallery-->
     <!--End-->
+    cnt++;
 }
 
 
@@ -57,14 +85,20 @@
     [Parameter]
     public long isNewPostCreated { get; set; }
     bool IsLoading { get; set; } = false;
+    IList<string> userRoles ;
 
     int PageSize = 10;
 
     int PageNumber = 0;
     bool StopLoading = false;
     List<PostModel> postList = new List<PostModel>();
+    bool isAdminPolicy = false;
     //IEnumerable<PostModel> orderedList => postList.OrderByDescending(i => i.createdate);
-
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync("api/accounts/userrole");
+        userRoles = await response.Content.ReadFromJsonAsync<IList<string>>();
+    }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

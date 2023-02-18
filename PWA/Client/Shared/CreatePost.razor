@@ -4,9 +4,10 @@
 <!-- create post -->
 <AuthorizeView Policy="@Policies.IsAdmin">
 
-<div class="bg-white p-3 mt-3 rounded border shadow">
+    <div class="bg-white p-0 align-content-center fixed-top rounded border shadow"
+         style="top: 70px;width:100%; z-index: 2">
     <!-- avatar -->
-    <div class="d-flex" type="button">
+        <div class="d-flex p-3  align-items-center" style="margin:0 auto; max-width: 680px" type="button">
         <div class="p-1" >
                 @if (@currentUser.ProfilePicture == null)
                 {
@@ -238,9 +239,9 @@
             </div>
         </div>
     </div>
-    <hr />
+    <!--hr /-->
     <!-- actions -->
-        <div class="d-flex flex-column flex-lg-row mt-3 d-none">
+       <!-- <div class="d-flex flex-column flex-lg-row mt-3 d-none">
        
         <div class="
                     dropdown-item
@@ -255,7 +256,7 @@
             <p class="m-0 text-muted">Photo/Video</p>
         </div>
        
-    </div>
+    </div>-->
 </div>
 </AuthorizeView>
 @code {

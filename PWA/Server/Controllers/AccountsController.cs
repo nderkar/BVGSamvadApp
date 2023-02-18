@@ -36,7 +36,18 @@ namespace Samvad_App.Server.Controllers
             
 			return currentUser;
         }
-		[HttpGet("{id}")]
+        [HttpGet]
+        [Route("userrole")]
+        public async Task<IList<string>> GetUserRoles()
+        {
+            if (User.Identity.Name != null)
+            {
+                currentUser = await _signInManager.UserManager.FindByEmailAsync(User.Identity.Name);
+            }
+
+            return await _userManager.GetRolesAsync(currentUser);
+        }
+        [HttpGet("{id}")]
 		public async Task<ApplicationUser> GetUserDetailsByUserId(string id)
 		{
 			return await _userService.GetUserAsync(id);
@@ -75,7 +86,7 @@ namespace Samvad_App.Server.Controllers
             if (model.UserRole == "Admin")
             {
 				await _userManager.AddToRoleAsync(newUser, "Admin");
-			}
+            }
 
 			return Ok(new RegisterResult { Successful = true });
 		}

@@ -16,10 +16,7 @@ namespace Samvad_App.Server.Repository
             return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
         }
 
-        //public List<ApplicationUser> GetByPostId(long postid, int page = 0, int size = 10)
-        //{
-            
-        //}
+        
         public Task<ApplicationUser> CreateAsync(ApplicationUser _object)
         {
             throw new NotImplementedException();
@@ -81,9 +78,9 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
-        public Task<List<ApplicationUser>> GetAllAsync(int page, int size)
+        public async Task<List<ApplicationUser>> GetAllAsync(int page, int size)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Users.OrderByDescending(x => x.CreatedDate).Skip(page * size).Take(size).ToListAsync();
         }
 
         public Task<ApplicationUser> UpdateAsync(ApplicationUser _object, int inc, string countType)

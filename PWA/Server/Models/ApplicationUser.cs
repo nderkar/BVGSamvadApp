@@ -11,5 +11,7 @@ namespace Samvad_App.Server.Models
 		public string ProfilePicture { get; set; }
         public string CustomClaim { get; set; }
 		public string Notes { get; set; }
-	}
+        public string Category { get; set; }
+        public DateTime CreatedDate { get; set; }
+    }
 }

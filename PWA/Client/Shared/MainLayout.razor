@@ -1,6 +1,26 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager _navigationManager
+<AuthorizeView>
+    <NotAuthorized>
+        @{
+            _navigationManager.NavigateTo("/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
 
-  @Body
+<AuthorizeView>
+    <Authorized>
+        <NavMenu />
+        <div class="container-fluid">
+            <div class="row justify-content-evenly">
+               <LeftPan/>
+                @Body
+               <RightPan/>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+ 
    
  
 @code{

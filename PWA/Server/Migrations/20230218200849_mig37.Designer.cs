@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Samvad_App.Server.Data;
 
@@ -11,9 +12,10 @@ using Samvad_App.Server.Data;
 namespace Samvad_App.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230218200849_mig37")]
+    partial class mig37
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,15 +53,15 @@ namespace Samvad_App.Server.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dc416abf-3c31-4a60-9357-eb051fa87daa",
-                            ConcurrencyStamp = "59336861-02e1-4122-84a6-4286d54b2a91",
+                            Id = "4fb2a5d0-a2eb-47a2-9707-bb93434c274f",
+                            ConcurrencyStamp = "858957ef-fe5e-4fe7-a31f-05c6d41aac0a",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "6257442d-70d4-42a9-90e4-642dfd46f39b",
-                            ConcurrencyStamp = "46d1f0ba-4480-4bc6-a9da-f939c443f4e3",
+                            Id = "81968976-755c-402e-9daf-c29c501e0ee0",
+                            ConcurrencyStamp = "f033a539-0572-4bd2-a030-be3eb9a0afc1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -189,9 +191,6 @@ namespace Samvad_App.Server.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("CustomClaim")
                         .HasColumnType("nvarchar(max)");

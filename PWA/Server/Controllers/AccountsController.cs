@@ -53,6 +53,11 @@ namespace Samvad_App.Server.Controllers
 			return await _userService.GetUserAsync(id);
 
 		}
+        [HttpGet("{allusers}/{page}/{size}")]
+        public async Task<List<ApplicationUser>> GetAll(string allusers,int page, int size)
+        {
+            return await _userService.GetAllUserAsync(page, size);
+        }
         [HttpGet("{id}/{userlikescomments}")]
         public async Task<List<ApplicationUser>> Get(long id,string userlikescomments)
         {
@@ -66,7 +71,9 @@ namespace Samvad_App.Server.Controllers
 				UserName = model.Email,
 				Email = model.Email,
 				FirstName = model.FirstName,
-				LastName = model.LastName
+				LastName = model.LastName,
+                Category = model.Category,
+                CreatedDate = DateTime.Now
 			};
 
 			var result = await _userManager.CreateAsync(newUser, model.Password);

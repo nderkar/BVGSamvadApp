@@ -1,0 +1,55 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+<div class="col-12 col-lg-6 pb-5">
+            <div class="d-flex flex-column justify-content-center w-100 mx-auto"
+                 style="padding-top: 56px; max-width: 680px">
+               
+<div class="head m-4">
+    <h1></h1>
+            <h4>User Details</h4>
+</div>
+<div>
+    <a href="/register"> Add New User</a>
+            @if (userList != null)
+    {
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>                           
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in userList)
+                        {
+                            <tr>
+                                <td>@p.FirstName</td>
+                                <td>@p.LastName</td>
+                                <td>@p.Email</td>
+                                <td>
+                                    <a href="/editemployee/@p.Id" class="btn btn-success btn-sm rounded-0" title="Edit"><i class="fa fa-edit"></i></a>
+                                </td>
+                                <td><a href="/deleteemployee/@p.Id" class="btn btn-danger btn-sm rounded-0" title="Delete"><i class="fa fa-trash"></i></a></td>
+                            </tr>
+
+
+                        }
+                    </tbody>
+                </table>
+           
+    }
+</div>
+</div>
+</div>
+@code {
+    List<UserModel> userList = new List<UserModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await Http.GetAsync("api/accounts/allusers/0/100");
+        response.EnsureSuccessStatusCode();
+        userList = await response.Content.ReadFromJsonAsync<List<UserModel>>();
+    }
+}

@@ -1,6 +1,5 @@
 ﻿@using Samvad_App.Shared.Models
 @inject HttpClient Http
-@using System.Threading
 @inject IJSRuntime JsRuntime
 @implements IDisposable
 @{
@@ -59,9 +58,9 @@
 
 @if (StopLoading)
 {
-    <div id="list-end" class="mt-5 mb-5 p-5">
+    <!--div id="list-end" class="mt-5 mb-5 p-5">
         <p>End Of Post</p>
-    </div>
+    </div-->
 }
 <div id="list-end" class="mt-5 mb-5 p-5">
     <p></p>
@@ -92,7 +91,6 @@
     int PageNumber = 0;
     bool StopLoading = false;
     List<PostModel> postList = new List<PostModel>();
-    bool isAdminPolicy = false;
     //IEnumerable<PostModel> orderedList => postList.OrderByDescending(i => i.createdate);
     protected override async Task OnInitializedAsync()
     {
@@ -124,7 +122,7 @@
 
             StateHasChanged();
 
-            await Task.Delay(400);
+            await Task.Delay(1000);
 
             var responsePosts = await Http.GetAsync("api/post/" + PageNumber.ToString() + "/" + PageSize.ToString());
             responsePosts.EnsureSuccessStatusCode();

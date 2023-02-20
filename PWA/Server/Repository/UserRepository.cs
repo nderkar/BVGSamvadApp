@@ -32,6 +32,13 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
+        public async Task DeleteAsync(string id)
+        {
+            var data = _dbContext.Users.FirstOrDefault(x => x.Id == id);
+            _dbContext.Remove(data);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public Task<List<ApplicationUser>> GetAllAsync()
         {
             throw new NotImplementedException();

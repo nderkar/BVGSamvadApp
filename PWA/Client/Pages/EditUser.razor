@@ -1,0 +1,12 @@
+﻿@page "/edituser/{id}"
+@inject HttpClient Http
+<PageTitle>BVG Samvad Edit User</PageTitle>
+
+<EditUserPan Id="@Id" />
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+    
+}

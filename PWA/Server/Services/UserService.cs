@@ -23,5 +23,10 @@ namespace Samvad_App.Server.Services
             return await _user.GetByPostIdAsync(postid, userlikescomments);
         }
 
+        public async Task<bool> DeleteUser(string userId)
+        {
+            await _user.DeleteAsync(userId);
+            return true;
+        }
     }
 }

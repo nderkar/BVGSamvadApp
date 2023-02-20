@@ -104,5 +104,10 @@ namespace Samvad_App.Server.Repository
             }
             return pl;
         }
+
+        public Task DeleteAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

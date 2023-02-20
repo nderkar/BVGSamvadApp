@@ -13,5 +13,7 @@ namespace Samvad_App.Server.Models
 		public string Notes { get; set; }
         public string Category { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
+        public override string PhoneNumber { get; set; }
     }
 }

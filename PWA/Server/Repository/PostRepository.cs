@@ -30,6 +30,11 @@ namespace Samvad_App.Server.Repository
             throw new NotImplementedException();
         }
 
+        public Task DeleteAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         //public async Task<Post> GetAllAsync(string userId)
         //{
         //    return await _dbContext.Post.FirstOrDefaultAsync(x => x.createdby == userId);

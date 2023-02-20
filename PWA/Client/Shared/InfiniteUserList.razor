@@ -1,0 +1,128 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
+@implements IDisposable
+
+@foreach (var p in userList)
+{
+    <tr>
+        <td style="width:40%;height:100%;vertical-align:middle;">
+           @* <a href="/profile/@p.Id" class="btn btn-success btn-sm rounded-1" title="Profile"><i class="fa fa-eye"></i></a>
+        &nbsp;*@
+            <a href="/edituser/@p.Id" class="btn btn-success btn-sm rounded-1" title="Edit"><i class="fa fa-edit"></i></a>
+        &nbsp;
+            <a href="/deleteuser/@p.Id" class="btn btn-danger btn-sm rounded-1" title="Delete"><i class="fa fa-trash"></i></a>
+        </td>
+        <td style="width:60%">
+            <p>@p.FirstName @p.LastName</p>
+            <p>@p.Email</p>
+        </td>
+    </tr    >
+}
+
+    
+@if (StopLoading)
+{
+    <!--div id="list-end" class="mt-5 mb-5 p-5">
+        <p>End Of Post</p>
+    </div-->
+}
+<div id="list-end" class="mt-5 mb-5 p-5">
+    <p></p>
+    @if (IsLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@code {
+    List<UserModel> userList = new List<UserModel>();
+    bool IsLoading { get; set; } = false;
+    int PageSize = 5;
+
+    int PageNumber = 0;
+    bool StopLoading = false;
+    protected override async Task OnInitializedAsync()
+    {
+        PageNumber = 0;
+        //var response = await Http.GetAsync("api/accounts/allusers/" + PageNumber.ToString() + "/" + PageSize.ToString());
+        //response.EnsureSuccessStatusCode();
+        //userList = await response.Content.ReadFromJsonAsync<List<UserModel>>();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userList = new List<UserModel>();
+            await LoadMore();
+            await InitJsListenerAsync();
+        }
+    }
+
+    protected async Task InitJsListenerAsync()
+    {
+        await JsRuntime.InvokeVoidAsync("ScrollList.Init", "list-end", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public async Task LoadMore()
+    {
+        if (!IsLoading)
+        {
+            IsLoading = true;
+
+            StateHasChanged();
+
+            await Task.Delay(1000);
+
+            var responsePosts = await Http.GetAsync("api/accounts/allusers/" + PageNumber.ToString() + "/" + PageSize.ToString());
+            responsePosts.EnsureSuccessStatusCode();
+            List<UserModel> _userList = await responsePosts.Content.ReadFromJsonAsync<List<UserModel>>();
+            userList.AddRange(_userList ?? new List<UserModel>());
+            //if (_userList.Count > 0)
+            //{
+            //    userList.AddRange(_userList);
+            //    //foreach (var u in _userList)
+            //    //{
+            //    //    userList.Add(u);
+            //    //}
+            //}
+            PageNumber++;
+
+            IsLoading = false;
+
+            StateHasChanged();
+
+
+            //at the end of pages or results stop loading anymore
+            //if (_userList == null)
+            //{
+            //    await StopListener();
+            //}
+            if (_userList?.Count < PageSize)
+            {
+                await StopListener();
+            }
+        }
+    }
+
+    public async Task StopListener()
+    {
+        StopLoading = true;
+        IsLoading = false;
+        await JsRuntime.InvokeVoidAsync("ScrollList.RemoveListener");
+        StateHasChanged();
+    }
+
+
+    public void Dispose()
+    {
+        JsRuntime.InvokeVoidAsync("ScrollList.RemoveListener");
+    }
+}

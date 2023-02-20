@@ -55,6 +55,10 @@
                 <InputText Id="category" Class="form-control" @bind-Value="@RegisterModel.Category" />
             </div>
             <div class="form-group pt-2">
+                <label for="lastname">Phone Number</label>
+                <InputText Id="phoneNumber" Class="form-control" @bind-Value="@RegisterModel.PhoneNumber" />
+            </div>
+            <div class="form-group pt-2">
                 <label for="email">Email address</label>
                 <InputText Id="email" Class="form-control" @bind-Value="@RegisterModel.Email" />
                 <ValidationMessage For="@(() => RegisterModel.Email)" />
@@ -70,10 +74,8 @@
                 <ValidationMessage For="@(() => RegisterModel.ConfirmPassword)" />
             </div>            
             <div class="form-group pt-4">
-                <button type="submit" class="submit btn-primary">Submit</button>
-            </div>
-            <div class="form-group pt-2" >
-                <a style="font-weight: bold;" href="/userlist">Manage Users</a>
+                <button type="submit" class="btn btn-primary">Create</button>&nbsp;
+                        <a style="font-weight: bold;" class="btn btn-default" href="/userlist">Cancel</a>
             </div>
 
         </EditForm>
@@ -95,7 +97,7 @@
 
         if (result.Successful)
         {
-            NavMan.NavigateTo("/userlist");
+            NavMan.NavigateTo("userlist");
         }
         else
         {

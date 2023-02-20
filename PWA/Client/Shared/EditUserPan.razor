@@ -1,0 +1,120 @@
+﻿@inject IAuthService AuthService
+@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+<div class="col-12 col-lg-6 pb-5">
+    <div class="d-flex flex-column justify-content-center w-100 mx-auto"
+         style="padding-top: 56px; max-width: 680px">
+
+        <div class="head m-4">
+            <h1></h1>
+            <h4>Edit User Information</h4>
+        </div>
+        @if (ShowErrors)
+        {
+            <div class="alert alert-danger" role="alert">
+                @foreach (var error in Errors)
+                {
+                    <p>error</p>
+                }
+            </div>
+        }
+        <div class="card login">
+            <div class="card-body">
+                <h5 class="card-title">Please enter your details</h5>
+                <EditForm Model="@RegisterModel" OnValidSubmit="@HandleRegistration">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group pt-2">
+                        <label for="firstname">First Name</label>
+                        <InputText Id="firstname" Class="form-control" @bind-Value="@RegisterModel.FirstName" />
+                        <ValidationMessage For="@(() => RegisterModel.FirstName)" />
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="lastname">Last Name</label>
+                        <InputText Id="lastname" Class="form-control" @bind-Value="@RegisterModel.LastName" />
+                        <ValidationMessage For="@(() => RegisterModel.LastName)" />
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="email">User Type : </label>
+                        <InputRadioGroup Class="form-control" @bind-Value="@RegisterModel.UserRole">
+                            @foreach (var option in roleOptions)
+                            {
+                                if (@option == "User")
+                                {
+                                    <InputRadio class="p-1" Value="@option" checked="checked" /> @option
+                                }
+                                else
+                                {
+                                    <InputRadio class="p-1" Value="@option" /> @option
+                                }
+
+                            }
+                        </InputRadioGroup>
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="lastname">Category</label>
+                        <InputText Id="category" Class="form-control" @bind-Value="@RegisterModel.Category" />
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="lastname">Phone Number</label>
+                        <InputText Id="phoneNumber" Class="form-control" @bind-Value="@RegisterModel.PhoneNumber" />
+                    </div>
+                    <div class="form-group pt-2">
+                        <label for="email">Email address</label>
+                        <InputText Id="email" readonly Class="form-control" @bind-Value="@RegisterModel.Email" />
+                        <ValidationMessage For="@(() => RegisterModel.Email)" />
+                    </div>
+                   
+                    <div class="form-group pt-4">
+                        <button type="submit" class="btn btn-primary">Update</button>&nbsp;
+                        <a style="font-weight: bold;" class="btn btn-default" href="/userlist">Cancel</a>
+                    </div>
+
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private EditUserModel RegisterModel = new EditUserModel();
+    UserModel _user = new UserModel();
+    protected override async Task OnInitializedAsync()
+    {
+        _user = await Http.GetFromJsonAsync<UserModel>("api/accounts/" + Id);
+        RegisterModel.FirstName = _user.FirstName;
+        RegisterModel.LastName = _user.LastName;
+        RegisterModel.Email = _user.Email;
+        RegisterModel.Id = _user.Id;
+        RegisterModel.Category = _user.Category;
+        RegisterModel.PhoneNumber = _user.PhoneNumber;
+        
+    }
+    private bool ShowErrors;
+    private IEnumerable<string> Errors;
+    List<string> roleOptions = new List<string> { "User", "Admin" };
+
+    private async Task HandleRegistration()
+    {
+        ShowErrors = false;
+
+        var result = await AuthService.UpdateUser(RegisterModel);
+        if (result.Successful)
+        {
+             NavigationManager.NavigateTo("userlist");
+        }
+        else
+        {
+            Errors = result.Errors;
+            ShowErrors = true;
+        }
+    }
+    
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("userlist");
+    }
+}

@@ -10,6 +10,7 @@ namespace Samvad_App.Server.Repository
         public Task<T> GetByIdAsync(int Id);
         public Task DeleteAsync(int id);
         public Task DeleteAsync(long id);
+        public Task DeleteAsync(string id);
         public Task<List<T>> GetAllAsync();
         public Task<T> GetByIdAsync(long postid);
         public Task<T> GetByIdAsync(string userId);

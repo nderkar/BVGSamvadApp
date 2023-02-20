@@ -3,12 +3,10 @@ using Samvad_App.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Samvad_App.Server.Services;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Manage.Internal;
-using Samvad_App.Client.Pages;
 
 namespace Samvad_App.Server.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class AccountsController : ControllerBase
 	{
@@ -53,6 +51,12 @@ namespace Samvad_App.Server.Controllers
 			return await _userService.GetUserAsync(id);
 
 		}
+        [HttpDelete("{id}")]
+        public async Task<bool> DeleteUser(string id)
+        {
+            await _userService.DeleteUser(id);
+            return true;
+        }
         [HttpGet("{allusers}/{page}/{size}")]
         public async Task<List<ApplicationUser>> GetAll(string allusers,int page, int size)
         {
@@ -73,8 +77,10 @@ namespace Samvad_App.Server.Controllers
 				FirstName = model.FirstName,
 				LastName = model.LastName,
                 Category = model.Category,
-                CreatedDate = DateTime.Now
-			};
+                PhoneNumber = model.PhoneNumber,
+                CreatedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
 
 			var result = await _userManager.CreateAsync(newUser, model.Password);
 
@@ -99,7 +105,7 @@ namespace Samvad_App.Server.Controllers
 		}
         [HttpPost]
         [Route("changepassword")]
-        public async Task<IActionResult> Put([FromBody] Shared.Models.ChangePasswordModel model)
+        public async Task<IActionResult> Put([FromBody] ChangePasswordModel model)
         {
             
             if (User.Identity.Name != null)
@@ -124,6 +130,41 @@ namespace Samvad_App.Server.Controllers
 
 
             return Ok(new ChangePasswordResult { Successful = true });
+        }
+        [HttpPost]
+        [Route("updateuser")]
+        public async Task<IActionResult> UpdateUser([FromBody] EditUserModel model)
+        {
+            var _user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+
+            _user.FirstName = model.FirstName;
+            _user.LastName = model.LastName;
+            _user.Category = model.Category;
+            _user.PhoneNumber = model.PhoneNumber;
+            _user.ModifiedDate = DateTime.Now;
+            
+
+            var result = await _userManager.UpdateAsync(_user);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(x => x.Description);
+
+                return BadRequest(new RegisterResult { Successful = false, Errors = errors });
+            }
+
+            if (model.UserRole == "Admin")
+            {                
+                IList<string> userRoles = await _userManager.GetRolesAsync(_user);
+                if (userRoles != null)
+                {
+                    if(!userRoles.Contains("Admin"))
+                    {
+                        await _userManager.AddToRoleAsync(_user, "Admin");
+                    }
+                }
+            }
+
+            return Ok(new RegisterResult { Successful = true });
         }
     }
 }

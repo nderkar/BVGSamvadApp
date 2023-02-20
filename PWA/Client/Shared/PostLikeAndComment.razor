@@ -132,14 +132,16 @@
                                              @onclick="SaveLike">
                                             @if (isCurrentUserLike)
                                             {
-                                                <i class="text-primary fas fa-thumbs-up me-3"></i>
+                                                <img src="/images/likeactive.png" />
+                                                <!--i class="text-primary fas fa-thumbs-up me-3"></i-->                                                
                                             }
                                             else
                                             {
-                                                <i class="fas fa-thumbs-up me-3"></i>
+                                                <img src="/images/likeinactive.png" />
+                                                <!--i class="fas fa-thumbs-up me-3"></i-->
                                             }
 
-                                            <p class="m-0">Like</p>
+                                            <!--p class="m-0">Like</p-->
                                         </div>
                                         <div class="
                             dropdown-item
@@ -155,8 +157,9 @@
                                              data-bs-target="#@collapspostid"
                                              aria-expanded="false"
                                              aria-controls="@collapspostid">
-                                                <i class="fas fa-comment-alt me-3"></i>
-                                                <p class="m-0">Comment</p>
+                                                <img src="/images/commentinactive.png" />
+                                                <!--i class="fas fa-comment-alt me-3"></i>
+                                                <p-- class="m-0">Comment</p-->
                                             </div>
                                         </div>
                                         <!-- comment expand -->

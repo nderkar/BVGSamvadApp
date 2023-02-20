@@ -57,5 +57,11 @@ namespace Samvad_App.Client.Services
             ChangePasswordResult result = await response.Content.ReadFromJsonAsync<ChangePasswordResult>();
             return result;
         }
+        public async Task<RegisterResult> UpdateUser(EditUserModel editUserModel)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/accounts/updateuser", editUserModel);
+            RegisterResult result = await response.Content.ReadFromJsonAsync<RegisterResult>();
+            return result;
+        }
     }
 }

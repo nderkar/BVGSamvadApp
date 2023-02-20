@@ -6,6 +6,7 @@ namespace Samvad_App.Client.Services
 	{
 		Task<LoginResult> Login(LoginModel loginModel);
 		Task<RegisterResult> Register(RegisterModel registerModel);
+		Task<RegisterResult> UpdateUser(EditUserModel editUserModel);
         Task<ChangePasswordResult> ChangePassword(ChangePasswordModel changePasswordModel);
         Task Logout();
 	}

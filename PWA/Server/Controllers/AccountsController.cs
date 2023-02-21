@@ -57,10 +57,10 @@ namespace Samvad_App.Server.Controllers
             await _userService.DeleteUser(id);
             return true;
         }
-        [HttpGet("{allusers}/{page}/{size}")]
-        public async Task<List<ApplicationUser>> GetAll(string allusers,int page, int size)
+        [HttpPost("{allusers}/{page}/{size}")]
+        public async Task<List<ApplicationUser>> GetAll([FromBody] UserSearchModel model, string allusers,int page, int size)
         {
-            return await _userService.GetAllUserAsync(page, size);
+            return await _userService.GetAllUserAsync(model,page, size);
         }
         [HttpGet("{id}/{userlikescomments}")]
         public async Task<List<ApplicationUser>> Get(long id,string userlikescomments)

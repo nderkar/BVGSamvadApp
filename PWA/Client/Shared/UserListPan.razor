@@ -1,35 +1,86 @@
-﻿<div class="col-12 col-lg-6 pb-5">
+﻿@inject IJSRuntime js
+<div class="col-12 col-lg-6 pb-5">
     <div class="d-flex flex-column justify-content-center w-100 mx-auto"
-         style="padding-top: 56px; max-width: 680px">
-
-        <div class="table-area d-flex flex-column justify-content-center w-100 mx-auto"
-             style="max-width: 680px;"  >
-            <div class="container light-style flex-grow-1 container-p-y mt-0" style="overflow-x:auto;">
-                <h4 class="font-weight-bold py-3 mb-4">
-                    User Details
-                </h4>
-                <a href="/register" class="btn btn-primary">Add New User</a>
-           
-            <table class="table table-fixed table-hover">
-                    <thead>
-                        <tr>
-                        <th style="width:40%">Action</th>
-                        <th style="width:60%">User Details</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-           
-               
-                       <InfiniteUserList/>
-            </tbody>
-        </table>
-
-    </div>
+         style="padding-top: 130px; max-width: 680px">
+        <div class="wrapper">
+            <div class="search_box">
+                <div class="dropdown">
+                    @*<div class="default_option">All</div>
+                    <ul>
+                        <li>All</li>
+                        <li>Email</li>
+                        <li>First Name</li>
+                        <li>Last Name</li>
+                    </ul>*@
+                    <select class="default_option" style="border:none;" 
+                    @bind="SearchField">
+                        <option>All</option>
+                        <option>Email</option>
+                        <option>First Name</option>
+                        <option>Last Name</option>
+                        <option>Category</option>
+    </select>
+                </div>
+                <div class="search_field">
+                    <input type="text" class="input" placeholder="Search"
+                           @onkeyup="SerachUser"
+                           @bind="@SearchText">
+                    <i class="fas fa-search" @onclick="GetSerachResult"></i>
                  
+                </div>
+            </div>
+        </div>
+           
+                <div class="grid-scroller">
+                    <div class="grid">
+                <div class="grid-header fixed-left"><b>Action</b></div>
+                        <div class="grid-header"><b>User Details</b></div>
+                <div class="grid-header noleftborder"><a href="/register" class="btn btn-primary">New</a></div>
+
+
+
+                <InfiniteUserList 
+                    searchField="@SearchField"
+                    searchValue="@SearchValue"
+                    isSearchOptionChanged="@IsSearchOptionChanged" />
+        
+     
+    </div>
 </div>
 </div>
 </div>
 @code {
+    IJSObjectReference JsObjectRef { get; set; }
+    private string SearchText { get; set; }
+    private string SearchField { get; set; }
+    private string SearchValue { get; set; }
+    private bool IsSearchOptionChanged { get; set; }
     
+    protected override async Task OnInitializedAsync()
+    {
+        IsSearchOptionChanged = false;
+        SearchText = "";
+        SearchValue = "";
+        SearchField = "All";
+       
+        JsObjectRef = await js.InvokeAsync<IJSObjectReference>("import", "/js/searchbox.js");
+    }
+    public async void SerachUser(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            SearchValue = SearchText;
+            await GetSerachResult();
+        }
+    }
+    private async Task GetSerachResult()
+    {
+        if (SearchText.Trim() != "")
+        {
+            SearchValue = SearchText;
+            IsSearchOptionChanged = true;
+          
+        }
+    }
+   
 }

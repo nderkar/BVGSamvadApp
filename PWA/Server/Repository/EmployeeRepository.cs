@@ -1,6 +1,8 @@
 ﻿using Samvad_App.Server.Data;
 using Samvad_App.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Samvad_App.Shared.Models;
+
 namespace Samvad_App.Server.Repository
 {
     public class EmployeeRepository : IRepository<Employee>
@@ -97,6 +99,11 @@ namespace Samvad_App.Server.Repository
         }
 
         public Task DeleteAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Employee>> GetAllAsync(UserSearchModel model, int page, int size)
         {
             throw new NotImplementedException();
         }

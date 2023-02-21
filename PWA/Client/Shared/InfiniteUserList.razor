@@ -5,19 +5,16 @@
 
 @foreach (var p in userList)
 {
-    <tr>
-        <td style="width:40%;height:100%;vertical-align:middle;">
-           @* <a href="/profile/@p.Id" class="btn btn-success btn-sm rounded-1" title="Profile"><i class="fa fa-eye"></i></a>
-        &nbsp;*@
-            <a href="/edituser/@p.Id" class="btn btn-success btn-sm rounded-1" title="Edit"><i class="fa fa-edit"></i></a>
-        &nbsp;
-            <a href="/deleteuser/@p.Id" class="btn btn-danger btn-sm rounded-1" title="Delete"><i class="fa fa-trash"></i></a>
-        </td>
-        <td style="width:60%">
-            <p>@p.FirstName @p.LastName</p>
-            <p>@p.Email</p>
-        </td>
-    </tr    >
+    <div class="grid-entry fixed-left" style="align-items:center;">
+        <a href="/edituser/@p.Id" class="btn btn-success btn-sm rounded-1" title="Edit"><i class="fa fa-edit"></i></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="/deleteuser/@p.Id" class="btn btn-danger btn-sm rounded-1" title="Delete"><i class="fa fa-trash"></i></a>
+    </div>
+    <div class="grid-entry">
+        <p>@p.FirstName @p.LastName</p>
+        <p>@p.Email</p>
+    </div>
+    <div class="grid-entry noleftborder"></div>
 }
 
     
@@ -27,7 +24,8 @@
         <p>End Of Post</p>
     </div-->
 }
-<div id="list-end" class="mt-5 mb-5 p-5">
+<div class="grid-entry fixed-left" style="align-items:center;"></div>
+<div id="list-end" class="grid-entry">
     <p></p>
     @if (IsLoading)
     {
@@ -40,25 +38,51 @@
 
 
 </div>
+<div class="grid-entry noleftborder"></div>
 
 @code {
+    [Parameter]
+    public string searchValue { get; set; }
+    [Parameter]
+    public string searchField { get; set; }
+    [Parameter]
+    public bool isSearchOptionChanged { get; set; }
     List<UserModel> userList = new List<UserModel>();
     bool IsLoading { get; set; } = false;
-    int PageSize = 5;
+    int PageSize = 50;
 
     int PageNumber = 0;
     bool StopLoading = false;
+    UserSearchModel userSearch = new UserSearchModel();
     protected override async Task OnInitializedAsync()
     {
         PageNumber = 0;
-        //var response = await Http.GetAsync("api/accounts/allusers/" + PageNumber.ToString() + "/" + PageSize.ToString());
-        //response.EnsureSuccessStatusCode();
-        //userList = await response.Content.ReadFromJsonAsync<List<UserModel>>();
+        userSearch = new UserSearchModel()
+        {
+            SearchField = searchField,
+            SearchValue =searchValue
+        };
+       
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            userList = new List<UserModel>();
+            await LoadMore();
+            await InitJsListenerAsync();
+        }
+        else if (isSearchOptionChanged)
+        {
+            PageNumber = 0;
+            StopLoading = true;
+            userSearch = new UserSearchModel()
+                {
+                    SearchField = searchField,
+                    SearchValue = searchValue
+                };
+            IsLoading = false;
+            isSearchOptionChanged = false;
             userList = new List<UserModel>();
             await LoadMore();
             await InitJsListenerAsync();
@@ -73,43 +97,44 @@
     [JSInvokable]
     public async Task LoadMore()
     {
-        if (!IsLoading)
+        try
         {
-            IsLoading = true;
-
-            StateHasChanged();
-
-            await Task.Delay(1000);
-
-            var responsePosts = await Http.GetAsync("api/accounts/allusers/" + PageNumber.ToString() + "/" + PageSize.ToString());
-            responsePosts.EnsureSuccessStatusCode();
-            List<UserModel> _userList = await responsePosts.Content.ReadFromJsonAsync<List<UserModel>>();
-            userList.AddRange(_userList ?? new List<UserModel>());
-            //if (_userList.Count > 0)
-            //{
-            //    userList.AddRange(_userList);
-            //    //foreach (var u in _userList)
-            //    //{
-            //    //    userList.Add(u);
-            //    //}
-            //}
-            PageNumber++;
-
-            IsLoading = false;
-
-            StateHasChanged();
-
-
-            //at the end of pages or results stop loading anymore
-            //if (_userList == null)
-            //{
-            //    await StopListener();
-            //}
-            if (_userList?.Count < PageSize)
+            if (!IsLoading)
             {
-                await StopListener();
+                IsLoading = true;
+
+                StateHasChanged();
+
+                await Task.Delay(1000);
+
+                var responsePosts = await Http.PostAsJsonAsync("api/accounts/allusers/" + PageNumber.ToString() + "/" + PageSize.ToString(), userSearch);
+                responsePosts.EnsureSuccessStatusCode();
+                List<UserModel> _userList = await responsePosts.Content.ReadFromJsonAsync<List<UserModel>>();
+                userList.AddRange(_userList ?? new List<UserModel>());
+              
+                PageNumber++;
+
+                IsLoading = false;
+
+                StateHasChanged();
+
+
+                //at the end of pages or results stop loading anymore
+                //if (_userList == null)
+                //{
+                //    await StopListener();
+                //}
+                if (_userList?.Count < PageSize)
+                {
+                    await StopListener();
+                }
             }
         }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Error 101 :" + ex.Message);
+        }
+        
     }
 
     public async Task StopListener()

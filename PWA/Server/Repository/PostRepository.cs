@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Samvad_App.Server.Data;
 using Samvad_App.Server.Models;
+using Samvad_App.Shared.Models;
 
 namespace Samvad_App.Server.Repository
 {
@@ -46,6 +47,11 @@ namespace Samvad_App.Server.Repository
         }
 
         public Task<List<Post>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Post>> GetAllAsync(UserSearchModel model, int page, int size)
         {
             throw new NotImplementedException();
         }

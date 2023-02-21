@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Samvad_App.Server.Data;
 using Samvad_App.Server.Models;
+using Samvad_App.Shared.Models;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Samvad_App.Server.Repository
 {
@@ -108,6 +111,77 @@ namespace Samvad_App.Server.Repository
         public Task<ApplicationUser> GetByPostId(long postid, string userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<ApplicationUser>> GetAllAsync(UserSearchModel model, int page, int size)
+        {
+            List<ApplicationUser> userList = new List<ApplicationUser>();
+            if(model.SearchField.ToLower().Trim() == "all")
+            {
+                if(model.SearchValue.Trim() == string.Empty)
+                {
+                    userList = await _dbContext.Users.OrderByDescending(x => x.CreatedDate).Skip(page * size).Take(size).ToListAsync();
+                }
+                else
+                {
+                    userList = await _dbContext.Users
+                        .Where(x=> 
+                        x.FirstName.Contains(model.SearchValue) || 
+                        x.LastName.Contains(model.SearchValue) ||
+                        x.Email.Contains(model.SearchValue) ||
+                        x.Category.Contains(model.SearchValue))
+                        .OrderByDescending(x => x.CreatedDate)
+                        .Skip(page * size)
+                        .Take(size).ToListAsync();
+                }
+            }
+            else
+            {
+                if (model.SearchValue.Trim() != string.Empty)
+                {
+                    switch (model.SearchField.ToLower().Trim())
+                    {
+                        case "first name":
+                            userList = await _dbContext.Users
+                        .Where(x =>
+                        x.FirstName.Contains(model.SearchValue))
+                        .OrderByDescending(x => x.CreatedDate)
+                        .Skip(page * size)
+                        .Take(size).ToListAsync();
+                            break;
+                        case "last name":
+                            userList = await _dbContext.Users
+                         .Where(x =>
+                         x.LastName.Contains(model.SearchValue))
+                         .OrderByDescending(x => x.CreatedDate)
+                         .Skip(page * size)
+                         .Take(size).ToListAsync();
+                            break;
+                        case "category":
+                            userList = await _dbContext.Users
+                        .Where(x =>
+                        x.Category.Contains(model.SearchValue))
+                        .OrderByDescending(x => x.CreatedDate)
+                        .Skip(page * size)
+                        .Take(size).ToListAsync();
+                            break;
+                        case "email":
+                            userList = await _dbContext.Users
+                        .Where(x =>
+                        x.Email.Contains(model.SearchValue))
+                        .OrderByDescending(x => x.CreatedDate)
+                        .Skip(page * size)
+                        .Take(size).ToListAsync();
+                            break;
+                        default:
+                            // code block
+                            break;
+                    }
+                    
+                }
+            }
+           
+            return userList;
         }
     }
 }

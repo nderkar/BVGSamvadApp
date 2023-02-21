@@ -7,16 +7,22 @@
         this.DotNetHelper = DotNetHelper;
 
         this.ListenToScroll = function (event, element, DotNetHelper) {
-            var bounding = element.getBoundingClientRect();
-            if (
-                bounding.top >= 0 &&
-                bounding.left >= 0 &&
-                bounding.right <= (window.innerWidth || element.clientWidth) &&
-                bounding.bottom <= (window.innerHeight || element.clientHeight)
-            ) {
-                console.log('In the viewport!');
-                DotNetHelper.invokeMethodAsync("LoadMore");
+            try {
+                var bounding = element.getBoundingClientRect();
+                if (
+                    bounding.top >= 0 &&
+                    bounding.left >= 0 &&
+                    bounding.right <= (window.innerWidth || element.clientWidth) &&
+                    bounding.bottom <= (window.innerHeight || element.clientHeight)
+                ) {
+                    console.log('In the viewport!');
+                    DotNetHelper.invokeMethodAsync("LoadMore");
+                }
             }
+            catch {
+
+            }
+            
         };
 
         this.handler = (ev) => { this.ListenToScroll(ev, this.element, this.DotNetHelper) };

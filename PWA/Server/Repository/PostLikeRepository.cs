@@ -1,5 +1,6 @@
 ﻿using Samvad_App.Server.Data;
 using Samvad_App.Server.Models;
+using Samvad_App.Shared.Models;
 
 namespace Samvad_App.Server.Repository
 {
@@ -106,6 +107,11 @@ namespace Samvad_App.Server.Repository
         }
 
         public Task DeleteAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<PostLike>> GetAllAsync(UserSearchModel model, int page, int size)
         {
             throw new NotImplementedException();
         }

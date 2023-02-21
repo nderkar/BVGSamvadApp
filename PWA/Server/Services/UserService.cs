@@ -1,5 +1,6 @@
 ﻿using Samvad_App.Server.Models;
 using Samvad_App.Server.Repository;
+using Samvad_App.Shared.Models;
 
 namespace Samvad_App.Server.Services
 {
@@ -14,9 +15,9 @@ namespace Samvad_App.Server.Services
         {
             return await _user.GetByIdAsync(userId);
         }
-        public async Task<List<ApplicationUser>> GetAllUserAsync(int page, int size)
+        public async Task<List<ApplicationUser>> GetAllUserAsync(UserSearchModel model, int page, int size)
         {
-            return await _user.GetAllAsync(page, size);
+            return await _user.GetAllAsync(model,page, size);
         }
         public async Task<List<ApplicationUser>> GetPostLikeByPostId(long postid,string userlikescomments)
         {

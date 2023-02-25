@@ -6,9 +6,9 @@
 @foreach (var p in userList)
 {
     <div class="grid-entry fixed-left" style="align-items:center;">
-        <a href="/edituser/@p.Id" class="btn btn-success btn-sm rounded-1" title="Edit"><i class="fa fa-edit"></i></a>
+        <a href="/edituser/@p.Id" class="btn-success btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="/deleteuser/@p.Id" class="btn btn-danger btn-sm rounded-1" title="Delete"><i class="fa fa-trash"></i></a>
+        <a href="/deleteuser/@p.Id" class="btn-danger btn-sm" title="Delete"><i class="fa fa-trash"></i></a>
     </div>
     <div class="grid-entry">
         <p>@p.FirstName @p.LastName</p>

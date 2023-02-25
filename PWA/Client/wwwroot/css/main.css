@@ -859,16 +859,7 @@ table.responsive-table {
                         z-index: 4 !important;
                     }
 
-            .wrapper .search_box .dropdown:before {
-                content: "";
-                position: absolute;
-                top: 18px;
-                right: 20px;
-                border: 8px solid;
-                border-color: #5078ef transparent transparent transparent;
-                z-index: 4 !important;
-            }
-
+           
         .wrapper .search_box .search_field {
             width: 350px;
             height: 100%;

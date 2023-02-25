@@ -147,7 +147,9 @@
               style="width: 23em"
             >
               <!-- avatar -->
+            
               <li class="dropdown-item p-1 rounded d-flex" type="button">
+                   <a href="/profile/@currentUser.Id"  class="d-flex text-decoration-none">
                                 @if (@currentUser.ProfilePicture == null)
                                 {
                                     <img src="./images/user/@defaultAvatar"
@@ -163,9 +165,11 @@
                                
                 <div>
                                     <p class="m-0">@currentUser.FirstName @currentUser.LastName</p>
-                                    <!--p class="m-0 text-muted">See your profile</p-->
+                                    <p class="m-0 text-muted">See your profile</p>
                 </div>
+                 </a>
               </li>
+             
               <hr />
               <!--RightPanOptions-->
               <!-- 4 -->

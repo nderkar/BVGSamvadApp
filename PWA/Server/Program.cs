@@ -19,10 +19,13 @@ string jwtIssuer = builder.Configuration["JwtIssuer"];
 string jwtAudience = builder.Configuration["JwtAudience"];
 string jwtSecurityKey = builder.Configuration["JwtSecurityKey"];
 string fileUploadPath = builder.Configuration["FileUploadPath"];
+string avatarUploadPath = builder.Configuration["AvatarUploadPath"];
+
 
 Samvad_App.Shared.Models.AppSettingVariables settings = new Samvad_App.Shared.Models.AppSettingVariables();
 builder.Services.AddSingleton(settings);
 settings.FileUploadPath = fileUploadPath;
+settings.AvatarUploadPath = avatarUploadPath;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));

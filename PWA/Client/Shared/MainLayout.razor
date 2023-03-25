@@ -10,11 +10,13 @@
 
 <AuthorizeView>
     <Authorized>
-        <NavMenu />
+        <NavMenu isAvatarImageChanged="@isAvatarImageChanged" />
         <div class="container-fluid">
             <div class="row justify-content-evenly">
                <LeftPan/>
+                <CascadingValue Value=onAvatarChanged>
                 @Body
+                </CascadingValue>
                <RightPan/>
             </div>
         </div>
@@ -24,5 +26,10 @@
    
  
 @code{
-    
- }
+    public EventCallback onAvatarChanged => EventCallback.Factory.Create(this, RefreshAvatar);
+    long isAvatarImageChanged = 0;
+    private void RefreshAvatar()
+    {
+        isAvatarImageChanged = 1;
+    }
+}

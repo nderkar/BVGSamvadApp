@@ -768,19 +768,13 @@ table.responsive-table {
     position: sticky;
     right: 0;
 }
-
-.fixed-right2 {
-    border-left: 0px solid gray;
-    border-right: none;
-    position: sticky;
-    right: 200px;
-}
+/*
 
 .placeholder {
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 2;
     border-right: none;
-}
+}*/
 
 
     /*End*/

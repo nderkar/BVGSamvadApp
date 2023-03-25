@@ -1,0 +1,151 @@
+﻿@page "/myprofilephoto"
+@inject IAuthService AuthService
+@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject IJSRuntime _js;
+<PageTitle>BVG Samvad</PageTitle>
+<link rel="stylesheet" href="/avtar/jquery.Jcrop.css" />
+<link rel="stylesheet" href="/avtar/site.avatar.css" />
+<div class="col-12 col-lg-6 pb-5">
+    <div class="d-flex flex-column justify-content-center w-100 mx-auto"
+         style="padding-top: 56px; max-width: 680px">
+
+
+        <div class="container light-style flex-grow-1 container-p-y mt-2">
+            <h4 class="font-weight-bold py-3 mb-4">
+                Profile Photo
+            </h4>
+            <div class="card overflow-hidden">
+                <div class="row no-gutters row-bordered row-border-light">                    
+                    <div class="col-sm-12">
+
+                        <div class="form-group ProfilePicture" id="ProfileImg">
+                            @if (@_user.ProfilePicture == null)
+                            {
+                                <img src="./images/user/@defaultAvatar"
+                                 alt="Avatar" class="rounded-circle me-2"
+                                 style="width: 58px; height: 58px; object-fit: cover" />
+                            }
+                            else
+                            {
+                                <img src="./images/user/@_user.ProfilePicture"
+                                 alt="Avatar"  class="rounded-circle me-2"
+                                 style="width: 58px; height: 58px; object-fit: cover" />
+                            }
+                        </div>
+                        <div class="form-group">
+                            <section id="avatar-upload-box">
+                                <InputFile id="inputFile"
+                                           OnChange="@HandleFileInputChange"
+                                           accept="image/png,image/gif,image/jpeg"
+                                           ></InputFile>
+                                <div class="upload-file-notice">Maximum Size: <span>@MaxFileSizeMB</span> MB</div>
+                                <div class="upload-file-notice">Allowed file type: <span>png,jpg,gif</span></div>                                
+                            </section>
+                            <section id="avatar-crop-box" >
+                                @if ((fileTypeError || fileSizeError))
+                                {
+                                    <ul class="validation-errors mb-0">
+                                        @if (fileTypeError)
+                                        {
+                                            <li class="validation-message">Only image files are accepted.</li>
+                                        }
+                                        @if (fileSizeError)
+                                        {
+                                            <li class="validation-message">The max file size is @MaxFileSizeMB MB.</li>
+                                        }
+                                    </ul>
+                                }
+                                @if (selectedFile != null && selectedFile.Size > 0)
+                                {
+                                    <div class="col-12">
+                                        <img id="image_upload_preview" >                                        
+                                    </div>
+                                }
+
+                            </section>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+
+@code {
+    UserModel _user = new UserModel();
+    string defaultAvatar { get; set; }
+    const int MaxFileSizeMB = 50;
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024;
+    private bool fileSizeError = false;
+    private bool fileTypeError = false;
+    private IBrowserFile selectedFile;
+    public FileData fileData = new FileData();
+    string formJsUrl = "./js/avtar.js";
+
+    protected override async Task OnInitializedAsync()
+    {
+        defaultAvatar = "defaultuser.jpg";
+        _user = await Http.GetFromJsonAsync<UserModel>("api/accounts");
+    }
+    private async Task HandleFileInputChange(InputFileChangeEventArgs e)
+    {
+        fileSizeError = false;
+        fileTypeError = false;
+        List<string> acceptedFileTypes = new List<string>()
+        { "image/png", "image/jpeg", "image/gif" };
+        IBrowserFile file = e.File;
+
+        bool error = false;
+        if (file.Size > MaxFileSize)
+        {
+            error = true;
+            fileSizeError = true;
+        }
+
+        if (!acceptedFileTypes.Contains(file.ContentType))
+        {
+            error = true;
+            fileTypeError = true;
+        }
+
+        //keep the good files
+        if (!error)
+        {
+            selectedFile = file;
+
+            var buffers = new byte[file.Size];
+            await file.OpenReadStream(MaxFileSize).ReadAsync(buffers);
+            string imageType = file.ContentType;
+            int dotIndex = file.Name.LastIndexOf(".");
+            string fileExtension = "";
+            if (dotIndex > 0)
+            {
+                fileExtension = file.Name.Substring(dotIndex + 1);
+            }
+            fileData = new FileData()
+                {
+
+                    Data = buffers,
+                    FileExtension = fileExtension,
+                    Size = file.Size,
+                    FileName = file.Name
+                };
+            //saveMultipleFile.Files.Add(fileData);
+            }
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        await _js.InvokeVoidAsync("loadJs", formJsUrl);
+
+    }
+    //async Task saveAvatar()
+    //{
+    //    await _js.InvokeVoidAsync("saveAvatar");
+
+    //}
+}

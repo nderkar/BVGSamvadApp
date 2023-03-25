@@ -45,6 +45,13 @@ namespace Samvad_App.Server.Controllers
 
             return await _userManager.GetRolesAsync(currentUser);
         }
+        [HttpGet("{anyuser}/{getroles}/{id}")]
+        public async Task<IList<string>> GetAnyUserRoles(string anyuser, string getroles, string id)
+        {
+            var _user = await _signInManager.UserManager.FindByIdAsync(id);
+
+            return await _userManager.GetRolesAsync(_user);
+        }
         [HttpGet("{id}")]
 		public async Task<ApplicationUser> GetUserDetailsByUserId(string id)
 		{
@@ -132,6 +139,32 @@ namespace Samvad_App.Server.Controllers
             return Ok(new ChangePasswordResult { Successful = true });
         }
         [HttpPost]
+        [Route("changeuserpassword")]
+        public async Task<IActionResult> Put([FromBody] ChangeUserPasswordModel model)
+        {
+
+            var _user = await _signInManager.UserManager.FindByIdAsync(model.Id);
+
+            var resultCheck = await _signInManager.PasswordSignInAsync(_user.Email, model.OldPassword, false, false);
+
+            if (!resultCheck.Succeeded)
+            {
+                return BadRequest(new ChangePasswordResult { Successful = false, Error = "Username and password are invalid." });
+            }
+
+            var result = await _userManager.ChangePasswordAsync(_user, model.OldPassword, model.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(x => x.Description);
+
+                return BadRequest(new ChangePasswordResult { Successful = false, Errors = errors });
+            }
+
+
+            return Ok(new ChangePasswordResult { Successful = true });
+        }
+        [HttpPost]
         [Route("updateuser")]
         public async Task<IActionResult> UpdateUser([FromBody] EditUserModel model)
         {
@@ -162,6 +195,36 @@ namespace Samvad_App.Server.Controllers
                         await _userManager.AddToRoleAsync(_user, "Admin");
                     }
                 }
+            }
+            else
+            {
+                IList<string> userRoles = await _userManager.GetRolesAsync(_user);
+                if (userRoles != null)
+                {
+                    if (userRoles.Contains("Admin"))
+                    {
+                        await _userManager.RemoveFromRoleAsync(_user, "Admin");
+                    }
+                }
+            }
+
+            return Ok(new RegisterResult { Successful = true });
+        }
+        [HttpPost]
+        [Route("updateuseravatar")]
+        public async Task<IActionResult> UpdateUserAvatar([FromBody] UserModel model)
+        {
+            var _user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+
+            _user.ProfilePicture = model.ProfilePicture;
+            _user.ModifiedDate = DateTime.Now;
+
+            var result = await _userManager.UpdateAsync(_user);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(x => x.Description);
+
+                return BadRequest(new RegisterResult { Successful = false, Errors = errors });
             }
 
             return Ok(new RegisterResult { Successful = true });

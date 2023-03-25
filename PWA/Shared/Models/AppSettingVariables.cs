@@ -3,5 +3,6 @@
     public class AppSettingVariables
     {
         public string FileUploadPath { get; set; }
+        public string AvatarUploadPath { get; set; }
     }
 }

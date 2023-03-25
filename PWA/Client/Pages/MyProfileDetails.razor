@@ -1,4 +1,4 @@
-﻿@page "/profile/{id}"
+﻿@page "/myprofile"
 @inject IAuthService AuthService
 @using Samvad_App.Shared.Models
 @inject HttpClient Http
@@ -17,7 +17,7 @@
             </h4>
             <div class="card overflow-hidden">
                 <div class="row no-gutters row-bordered row-border-light">
-                    
+
                     <div class="col-sm-12">
                         <div class="tab-content">
                             <div class="tab-pane fade active show" id="account-general">
@@ -52,19 +52,24 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">User Type : </label>
-                                        <label class="form-text">@if(userRoles.Contains("Admin"))
+                                        <label class="form-text">
+                                            @if(userRoles != null)
                                             {
-                                                @adminUser
+                                                @if (userRoles.Contains("Admin"))
+                                                {
+                                                    @adminUser
+                                                }
+                                                else
+                                                {
+                                                    @generalUser
+                                                }
                                             }
-                                            else
-                                            {
-                                                @generalUser
-                                            }
+                                            
                                         </label>
 
                                     </div>
                                 </div>
-                                <hr class="border-light m-0">                                
+                                <hr class="border-light m-0">
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label class="form-label">Email</label>
@@ -78,24 +83,23 @@
                                     <div class="form-group">
                                         <label class="form-text">@_user.Category </label>
                                     </div>
-                                     <div class="form-group">
+                                    <div class="form-group">
                                         <label class="form-label">Phone</label>
                                     </div>
                                     <div class="form-group">
                                         <label class="form-text">@_user.PhoneNumber </label>
                                     </div>
                                 </div>
-                            </div>                                                       
+                            </div>
                         </div>
                     </div>
                     <div class="text-right m-3 mb-4">
-                        <a class="btn btn-primary" href="/edituser/@Id">Edit Profile</a>
-                        <a class="btn btn-primary" href="/changeuserpassword/@Id">Change Password</a>&nbsp;
-                        <a style="font-weight: bold;" class="btn btn-default" href="/userlist">Cancel</a>
+                        <a class="btn btn-primary" href="/edituser">Edit Profile</a>&nbsp;
+                        <a style="font-weight: bold;" class="btn btn-default" href="/">Cancel</a>
                     </div>
                 </div>
             </div>
-            
+           
         </div>
 
 
@@ -103,9 +107,8 @@
 </div>
 
 @code {
-
-    [Parameter]
-    public string Id { get; set; }
+    [CascadingParameter]
+    protected EventCallback onAvatarChanged { get; set; }
     UserModel _user = new UserModel();
     string defaultAvatar { get; set; }
     IList<string> userRoles;
@@ -119,12 +122,12 @@
     protected override async Task OnInitializedAsync()
     {
         defaultAvatar = "defaultuser.jpg";
-        _user = await Http.GetFromJsonAsync<UserModel>("api/accounts/" + Id);
+        _user = await Http.GetFromJsonAsync<UserModel>("api/accounts");
 
-        var response = await Http.GetAsync("api/accounts/anyuser/getroles/" + Id);
-        
+        var response = await Http.GetAsync("api/accounts/userrole");
+
         userRoles = await response.Content.ReadFromJsonAsync<IList<string>>();
-      
+
     }
     private async Task HandleFileInputChange(InputFileChangeEventArgs e)
     {
@@ -171,7 +174,8 @@
             var response = await Http.PostAsJsonAsync("/api/FileUpload/save-avatar", fileData);
             _user.ProfilePicture = await response.Content.ReadAsStringAsync();
             var result = await AuthService.UpdateUserAvatar(_user);
-            _user = await Http.GetFromJsonAsync<UserModel>("api/accounts/" + Id);
+            _user = await Http.GetFromJsonAsync<UserModel>("api/accounts");
+            await onAvatarChanged.InvokeAsync();
         }
 
     }

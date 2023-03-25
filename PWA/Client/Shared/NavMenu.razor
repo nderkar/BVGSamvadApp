@@ -149,7 +149,7 @@
               <!-- avatar -->
             
               <li class="dropdown-item p-1 rounded d-flex" type="button">
-                   <a href="/profile/@currentUser.Id"  class="d-flex text-decoration-none">
+                                <a href="/profile/@currentUser.Id" class="d-flex text-decoration-none" onclick="closeDropdownMenu('secondMenu');">
                                 @if (@currentUser.ProfilePicture == null)
                                 {
                                     <img src="./images/user/@defaultAvatar"
@@ -236,6 +236,25 @@
                                     </li>
                                 }
                             }
+                            <li class="dropdown-item p-1 my-3 rounded" type="button">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <a href="/myprofile"
+                                           class="d-flex text-decoration-none text-dark" onclick="closeDropdownMenu('secondMenu');">
+                                            <i class="fas fa-user bg-gray p-2 rounded-circle"></i>
+                                            <div class="
+                          ms-3
+                          d-flex
+                          justify-content-between
+                          align-items-center
+                          w-100
+                        ">
+                                                <p class="m-0">My Profile</p>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
               <li class="dropdown-item p-1 my-3 rounded" type="button">
                 <ul class="navbar-nav">
                   <li class="nav-item">
@@ -285,11 +304,18 @@
             <!-- end -->
           </div>
         </div>
-</div>
+                @if (@isAvatarImageChanged > 0)
+                {
+                    isAvatarImageChanged = 0;
+                    RefreshAvatar();
+                }
+            </div>
  </div>
  </Authorized>
  </AuthorizeView>
 @code {
+    [Parameter]
+    public long isAvatarImageChanged { get; set; }
     UserModel currentUser = new UserModel();
     string defaultAvatar { get; set; }
     IList<string> userRoles;
@@ -303,5 +329,11 @@
         userRoles = await responseUserRole.Content.ReadFromJsonAsync<IList<string>>();
            
     }
-   
+    protected async Task RefreshAvatar()
+    {
+        var response = await Http.GetAsync("api/accounts");
+        currentUser = new UserModel();
+        currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+    }
+
 }

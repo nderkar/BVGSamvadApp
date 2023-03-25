@@ -28,5 +28,7 @@ namespace Samvad_App.Shared.Models
         public string FileExtension { get; set; }
         public long Size { get; set; }
         public string FileName { get; set; }
+        public string Email { get; set; }
+        public string ProfilePicture { get; set; }
     }
 }

@@ -54,5 +54,23 @@ namespace Samvad_App.Server.Controllers
          
             return Ok(data);
         }
+        [HttpPost]
+        [DisableRequestSizeLimit,
+    RequestFormLimits(MultipartBodyLengthLimit = int.MaxValue,
+        ValueLengthLimit = int.MaxValue)]
+        [Route("save-avatar")]
+        public async Task<string> SaveAvatar([FromBody] FileData saveFile)
+        {
+            string rootPath = appSettingVariables.AvatarUploadPath;
+            string fileName = "";
+            fileName = $@"{Guid.NewGuid()}.{saveFile.FileExtension}";
+            string fullFileName = $@"{rootPath}\{fileName}";
+            using (var fileStream = System.IO.File.Create(fullFileName))
+            {
+                await fileStream.WriteAsync(saveFile.Data, 0, Convert.ToInt32(saveFile.Size));
+            }           
+
+            return fileName;
+        }
     }
 }

@@ -35,5 +35,9 @@ namespace Samvad_App.Shared.Models
         [Display(Name = "PhoneNumber")]
         public string PhoneNumber { get; set; }
 
+        [DataType(DataType.Text)]
+        [Display(Name = "ProfilePicture")]
+        public string ProfilePicture { get; set; }
+
     }
 }

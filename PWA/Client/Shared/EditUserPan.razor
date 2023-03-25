@@ -7,10 +7,15 @@
     <div class="d-flex flex-column justify-content-center w-100 mx-auto"
          style="padding-top: 56px; max-width: 680px">
 
-        <div class="head m-4">
-            <h1></h1>
-            <h4>Edit User Information</h4>
-        </div>
+
+        <div class="container light-style flex-grow-1 container-p-y mt-2">
+            <h4 class="font-weight-bold py-3 mb-4">
+                Edit User Information
+            </h4>
+            <div class="card overflow-hidden">
+                <div class="row no-gutters row-bordered row-border-light">
+                    
+                    <div class="col-sm-12">
         @if (ShowErrors)
         {
             <div class="alert alert-danger" role="alert">
@@ -20,7 +25,7 @@
                 }
             </div>
         }
-        <div class="card login">
+        <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Please enter your details</h5>
                 <EditForm Model="@RegisterModel" OnValidSubmit="@HandleRegistration">
@@ -41,15 +46,7 @@
                         <InputRadioGroup Class="form-control" @bind-Value="@RegisterModel.UserRole">
                             @foreach (var option in roleOptions)
                             {
-                                if (@option == "User")
-                                {
-                                    <InputRadio class="p-1" Value="@option" checked="checked" /> @option
-                                }
-                                else
-                                {
-                                    <InputRadio class="p-1" Value="@option" /> @option
-                                }
-
+                                <InputRadio class="p-2 m-2"  Value="@option" /> @option
                             }
                         </InputRadioGroup>
                     </div>
@@ -75,6 +72,12 @@
                 </EditForm>
             </div>
         </div>
+        </div>
+        <div>
+            </div>
+            </div>
+        </div>
+    </div>
     </div>
 </div>
 @code {
@@ -91,7 +94,18 @@
         RegisterModel.Id = _user.Id;
         RegisterModel.Category = _user.Category;
         RegisterModel.PhoneNumber = _user.PhoneNumber;
-        
+
+        var response = await Http.GetAsync("api/accounts/anyuser/getroles/" + Id);
+        IList<string> userRoles;
+        userRoles = await response.Content.ReadFromJsonAsync<IList<string>>();
+        RegisterModel.UserRole = "User";
+        if (userRoles != null)
+        {
+            if (userRoles.Contains("Admin"))
+            {
+                RegisterModel.UserRole = "Admin";
+            }
+        }
     }
     private bool ShowErrors;
     private IEnumerable<string> Errors;

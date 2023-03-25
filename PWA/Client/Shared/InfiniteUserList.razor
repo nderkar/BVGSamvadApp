@@ -6,13 +6,15 @@
 @foreach (var p in userList)
 {
     <div class="grid-entry fixed-left" style="align-items:center;">
-        <a href="/edituser/@p.Id" class="btn-success btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="/deleteuser/@p.Id" class="btn-danger btn-sm" title="Delete"><i class="fa fa-trash"></i></a>
+        <a href="/edituser/@p.Id"  title=" Edit "><i class="fa fa-edit" style="color:#11aa11"></i></a>
+        &nbsp;&nbsp;
+        <a href="/deleteuser/@p.Id"  title=" Delete "><i class="fa fa-trash" style="color:#cc1111"></i></a>
     </div>
-    <div class="grid-entry">
+    <div class="grid-entry" >
+        <a href="/profile/@p.Id" style="text-decoration:none ;color:#2c2c2c">
         <p>@p.FirstName @p.LastName</p>
         <p>@p.Email</p>
+        </a>
     </div>
     <div class="grid-entry noleftborder"></div>
 }

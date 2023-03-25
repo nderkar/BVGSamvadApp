@@ -27,9 +27,14 @@
  
 @code{
     public EventCallback onAvatarChanged => EventCallback.Factory.Create(this, RefreshAvatar);
-    long isAvatarImageChanged = 0;
+    int isAvatarImageChanged = 0;
+    protected override async Task OnInitializedAsync()
+    {
+        isAvatarImageChanged = 0;
+    }
     private void RefreshAvatar()
     {
-        isAvatarImageChanged = 1;
+        var random = new Random();
+        isAvatarImageChanged = random.Next(2, 9999);
     }
 }

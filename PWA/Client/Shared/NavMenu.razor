@@ -322,18 +322,20 @@
     protected override async Task OnInitializedAsync()
     {
         defaultAvatar = "defaultuser.jpg";
-        
+
         var response = await Http.GetAsync("api/accounts");
         currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
         var responseUserRole = await Http.GetAsync("api/accounts/userrole");
         userRoles = await responseUserRole.Content.ReadFromJsonAsync<IList<string>>();
-           
+
     }
     protected async Task RefreshAvatar()
     {
+        
         var response = await Http.GetAsync("api/accounts");
         currentUser = new UserModel();
         currentUser = await response.Content.ReadFromJsonAsync<UserModel>();
+        StateHasChanged();
     }
-
+   
 }

@@ -43,7 +43,7 @@ namespace Samvad_App.Server.Repository
 
         public async Task<List<Post>> GetAllAsync(int page=0,int size=10)
         {
-            return await _dbContext.Post.OrderByDescending(x => x.createdate).Skip(page * size).Take(size).ToListAsync();
+            return await _dbContext.Post.Where(u => u.isdeleted == false).OrderByDescending(x => x.createdate).Skip(page * size).Take(size).ToListAsync();
         }
 
         public Task<List<Post>> GetAllAsync()

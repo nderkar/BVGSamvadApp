@@ -6,6 +6,7 @@ namespace Samvad_App.Server.Services
 {
     public class EmployeeService : IEmployeeService
     {
+        //Not in Use
         private readonly IRepository<Employee> _employee;
         public EmployeeService(IRepository<Employee> Employee)
         {

@@ -1,0 +1,44 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+<div class="d-flex justify-content-between">
+    <!-- avatar -->
+    <div class="d-flex">
+        @if (@u.ProfilePicture == null)
+        {
+            <img src="./images/user/@defaultAvatar"
+             class="rounded-circle me-2"
+             style="width: 38px; height: 38px; object-fit: cover" />
+        }
+        else
+        {
+            <img src="./images/user/@u.ProfilePicture"
+             class="rounded-circle me-2"
+             style="width: 38px; height: 38px; object-fit: cover" />
+        }
+
+        <div>
+            <p class="m-0 fw-bold">@u.FirstName &nbsp;@u.LastName</p>
+            <span class="text-muted fs-7">@p.createdate.ToString("ddd dd MMM hh:mm tt")</span>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string postId { get; set; }
+    PostModel p = new PostModel();
+    UserModel u { get; set; }
+    string defaultAvatar { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        defaultAvatar = "defaultuser.jpg";
+        p = new PostModel();
+        p = await Http.GetFromJsonAsync<PostModel>("api/post/" + postId);
+        u = new UserModel();
+        var response = await Http.GetAsync("api/accounts/" + p.createdby);
+        response.EnsureSuccessStatusCode();
+        u = await response.Content.ReadFromJsonAsync<UserModel>();
+    }
+}
+

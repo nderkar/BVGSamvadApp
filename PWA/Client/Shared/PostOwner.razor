@@ -20,12 +20,24 @@
             <p class="m-0 fw-bold">@u.FirstName &nbsp;@u.LastName</p>
             <span class="text-muted fs-7">@p.createdate.ToString("ddd dd MMM hh:mm tt")</span>
         </div>
+        
     </div>
+    @if (userRoles != null)
+    {
+        if (userRoles.Contains("Admin"))
+        {
+            <div class="d-flex align-items-end px-2 ">
+                <a href="/deletepost/@p.postid" title=" Delete Post"><i class="fa fa-trash" style="color:#cc1111"></i></a>
+            </div>
+        }
+    }
 </div>
 
 @code {
     [Parameter]
     public PostModel p {get; set; }
+    [Parameter]
+    public List<string>  userRoles { get; set; }
     UserModel u { get; set; }
     string defaultAvatar { get; set; }
     protected override async Task OnInitializedAsync()

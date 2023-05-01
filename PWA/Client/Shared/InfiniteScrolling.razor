@@ -34,14 +34,14 @@
    
     <div class="bg-white p-3 @className mt-2 rounded shadow">
         <!-- author -->
-        <PostOwner p="@p" />
+        <PostOwner p="@p" userRoles="@userRoles" />
         <!-- post content -->
         <div class="mt-3">
             <!-- content -->
             <div>
                 <p>
                     @p.postmessage
-                </p>
+                </p>                
                 <!-- Photo Grid -->
                 <PostAssets post="@p" />
             </div>
@@ -84,7 +84,7 @@
     [Parameter]
     public long isNewPostCreated { get; set; }
     bool IsLoading { get; set; } = false;
-    IList<string> userRoles ;
+    List<string> userRoles = new List<string>() ;
 
     int PageSize = 10;
 
@@ -95,7 +95,7 @@
     protected override async Task OnInitializedAsync()
     {
         var response = await Http.GetAsync("api/accounts/userrole");
-        userRoles = await response.Content.ReadFromJsonAsync<IList<string>>();
+        userRoles = await response.Content.ReadFromJsonAsync<List<string>>();
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)

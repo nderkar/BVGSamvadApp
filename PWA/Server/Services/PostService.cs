@@ -17,8 +17,17 @@ namespace Samvad_App.Server.Services
 
         public async Task<bool> DeletePost(long postid)
         {
-            await _post.DeleteAsync(postid);
-            return true;
+            //await _post.DeleteAsync(postid);
+            //return true;
+            var data = await _post.GetByIdAsync(postid);
+            if (data != null)
+            {
+                data.isdeleted = true;
+                await _post.UpdateAsync(data);
+                return true;
+            }
+            else
+                return false;
         }
 
         public async Task<List<Post>> GetAllPostByUserAsync(string userId)

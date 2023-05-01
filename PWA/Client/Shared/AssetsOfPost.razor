@@ -1,0 +1,136 @@
+﻿@using Samvad_App.Shared.Models
+@inject HttpClient Http
+@{
+
+    if (post.extlink1 != null)
+    {
+        if (post.extlink1.ToLower().StartsWith("http"))
+        {
+            <!--autoplay="autoplay" muted-->
+            <div class="singleimg">
+                <iframe class="youtube-video" src="@post.extlink1"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+
+            </div>
+        }
+    }
+    if (post.extlink2 != null)
+    {
+        if (post.extlink2.ToLower().StartsWith("http"))
+        {
+            <!--autoplay="autoplay" muted-->
+            <div class="singleimg">
+                <iframe class="youtube-video" src="@post.extlink2"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+
+            </div>
+        }
+    }
+
+    @foreach (var p in postAssetList)
+    {
+
+        if (p.assettype.ToLower() == "mp4")
+        {
+
+            <div class="singleimg">
+                <video src="./postassets/@p.asseturl"
+               style="width:100%"
+               controls="controls" itemprop="video">
+                    <p>
+                        Sorry, your browser doesn't support embedded videos,
+                        but don't worry, you can
+                        <a href="./postassets/@p.asseturl"
+                   rel="attachment">download it</a>
+                        and watch it with your favorite video player!
+                    </p>
+                </video>
+            </div>
+        }
+    }
+    var i = 1;
+    @foreach (var p in postAssetList)
+    {
+        if (p.assettype.ToLower() != "mp4" && p.assettype.ToLower() != "mp3" && p.assettype.ToLower() != "pdf")
+        {
+            <div class="singleimg">
+                <img src="./postassets/@p.asseturl" style="width:100%" onclick="openModal('@post.postid');currentSlide('@post.postid',@i)" class="hover-shadow cursor">
+            </div>
+            i += 1;
+        }
+    }
+    @foreach (var p in postAssetList)
+    {
+        if (p.assettype.ToLower() == "mp3")
+        {
+            <div class="singleimg m-4">
+                <audio style="width:100%"
+               controls
+               src="./postassets/@p.asseturl">
+                    <a href="./postassets/@p.asseturl">
+                        Download audio
+                    </a>
+                </audio>
+            </div>
+        }
+    }
+    @foreach (var p in postAssetList)
+    {
+        if (p.assettype.ToLower() == "pdf")
+        {
+            <div class="singleimg m-4">
+                <p class="text-muted">PDF Document</p>
+                <a href="./postassets/@p.asseturl" target="_blank">@p.asseturl.Replace(".pdf","").Replace(".PDF","")</a>
+            </div>
+        }
+    }
+    <!--Gallery-->
+    @if (@post.postid > 0)
+    {
+        <div id="@post.postid" class="modal">
+            <span class="close cursor" onclick="closeModal('@post.postid')">&times;</span>
+            <div class="modal-content">
+                @foreach (var pa in postAssetList)
+                {
+                    if (pa.assettype.ToLower() != "mp4")
+                    {
+
+                        <div class="mySlides">
+                            <div class="numbertext"></div>
+                            <img src="./postassets/@pa.asseturl" style="width:100%">
+                        </div>
+
+
+                    }
+
+                }
+                <a class="prev" onclick="plusSlides('@post.postid',-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides('@post.postid',1)">&#10095;</a>
+
+            </div>
+        </div>
+    }
+
+}
+
+
+<!--End-->
+@code {
+    [Parameter]
+    public string postId { get; set; }
+    PostModel post = new PostModel();
+    List<PostAssetModel> postAssetList = new List<PostAssetModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        post = new PostModel();
+        post = await Http.GetFromJsonAsync<PostModel>("api/post/" + postId);
+        postAssetList = new List<PostAssetModel>();
+        var response = await Http.GetAsync("api/postasset/" + postId);
+        response.EnsureSuccessStatusCode();
+        postAssetList = await response.Content.ReadFromJsonAsync<List<PostAssetModel>>();
+    }
+}
